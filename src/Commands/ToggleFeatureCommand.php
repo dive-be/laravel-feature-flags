@@ -14,19 +14,7 @@ class ToggleFeatureCommand extends Command
 
     public function handle(Application $app)
     {
-        if (! is_string($name = $this->argument('name'))) {
-            $this->error('You must provide a valid feature name.');
-
-            return 1;
-        }
-
-        if (is_array($scope = $this->argument('scope'))) {
-            $this->error('You may only provide a single scope.');
-
-            return 1;
-        }
-
-        $feature = Feature::find($name, $scope);
+        $feature = Feature::find($this->argument('name'), $this->argument('scope'));
 
         $this->printState($feature, 'ℹ️', 'currently');
 
