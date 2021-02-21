@@ -9,8 +9,8 @@
          convertWarningsToExceptions="true"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name="Feature Tests">
-            <directory suffix="Test.php">tests/Feature</directory>
+        <testsuite name="Feature Flags Tests">
+            <directory suffix="Test.php">tests</directory>
         </testsuite>
     </testsuites>
     <filter>

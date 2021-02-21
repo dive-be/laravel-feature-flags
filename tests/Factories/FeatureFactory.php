@@ -25,4 +25,19 @@ class FeatureFactory extends Factory
             'message' => [app()->getLocale() => $this->faker->text],
         ]);
     }
+
+    public function withLabel(string $label): self
+    {
+        return $this->state(compact('label'));
+    }
+
+    public function withName(string $name): self
+    {
+        return $this->state(compact('name'));
+    }
+
+    public function withScope(string $scope): self
+    {
+        return $this->state(compact('scope'));
+    }
 }
