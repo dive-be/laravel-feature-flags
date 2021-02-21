@@ -9,10 +9,10 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class EnsureFeatureIsEnabled
 {
-    public function handle(Request $request, Closure $next, ...$args)
+    public function handle(Request $request, Closure $next, string $name, ?string $scope = null)
     {
-        if (Feature::disabled(...$args)) {
-            throw new AccessDeniedHttpException(Feature::find(...$args)->message);
+        if (Feature::disabled($name, $scope)) {
+            throw new AccessDeniedHttpException(Feature::find($name, $scope)->message);
         }
 
         return $next($request);
