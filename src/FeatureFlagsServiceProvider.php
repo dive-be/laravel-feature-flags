@@ -2,13 +2,20 @@
 
 namespace Dive\FeatureFlags;
 
+use Dive\FeatureFlags\Commands\ToggleFeatureCommand;
 use Illuminate\Support\ServiceProvider;
 
 class FeatureFlagsServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $this->loadMigrationsFrom(__DIR__.'../database/migrations');
+        if ($this->app->runningInConsole()) {
+            $this->loadMigrationsFrom(__DIR__.'../database/migrations');
+
+            $this->commands([
+                ToggleFeatureCommand::class,
+            ]);
+        }
 
         $this->registerBladeDirectives();
     }
