@@ -2,6 +2,7 @@
 
 namespace Dive\FeatureFlags;
 
+use Dive\FeatureFlags\Commands\ListFeatureCommand;
 use Dive\FeatureFlags\Commands\ToggleFeatureCommand;
 use Illuminate\Support\ServiceProvider;
 
@@ -13,6 +14,7 @@ class FeatureFlagsServiceProvider extends ServiceProvider
             $this->loadMigrationsFrom(__DIR__.'../database/migrations');
 
             $this->commands([
+                ListFeatureCommand::class,
                 ToggleFeatureCommand::class,
             ]);
         }
