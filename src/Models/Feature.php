@@ -54,7 +54,7 @@ class Feature extends Model implements Contract
     /**
      * @throws UnknownFeatureException
      */
-    public function find(string $name, ?string $scope = null)
+    public function find(string $name, ?string $scope = null): self
     {
         $scope ??= self::GENERAL;
 

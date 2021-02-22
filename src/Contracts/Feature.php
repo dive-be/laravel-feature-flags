@@ -10,7 +10,7 @@ interface Feature
 
     public function enabled(string $name, ?string $scope = null): bool;
 
-    public function find(string $name, ?string $scope = null);
+    public function find(string $name, ?string $scope = null): self;
 
     public function getDescription(): string;
 
