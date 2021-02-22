@@ -1,0 +1,23 @@
+<?php
+
+namespace Tests;
+
+use Dive\FeatureFlags\Feature;
+use Dive\FeatureFlags\TranslatableFeature;
+use Spatie\Translatable\HasTranslations;
+
+beforeEach(function () {
+    $this->model = new TranslatableFeature();
+});
+
+it('extends the base model', function () {
+    expect($this->model)->toBeInstanceOf(Feature::class);
+});
+
+it('has the correct translatable attributes', function () {
+    expect($this->model->getTranslatableAttributes())->toBe(['message']);
+});
+
+it('uses the translatables trait', function () {
+    expect(class_uses($this->model))->toContain(HasTranslations::class);
+});
