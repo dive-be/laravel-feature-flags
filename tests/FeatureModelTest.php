@@ -23,7 +23,23 @@ it('allows identical feature names using distinct scopes', function () {
     expect($featureA->unique_name)->not->toBe($featureB->unique_name);
 });
 
-it('can determine whether a feature has been disabled', function () {
+it('can determine whether a feature is enabled', function () {
+    $featureA = FeatureFactory::new()->make();
+    $featureB = FeatureFactory::new()->isDisabled()->make();
+
+    expect($featureA->isEnabled())->toBeTrue();
+    expect($featureB->isEnabled())->toBeFalse();
+});
+
+it('can determine whether a feature is disabled', function () {
+    $featureA = FeatureFactory::new()->make();
+    $featureB = FeatureFactory::new()->isDisabled()->make();
+
+    expect($featureA->isDisabled())->toBeFalse();
+    expect($featureB->isDisabled())->toBeTrue();
+});
+
+it('can find and determine whether a feature has been disabled', function () {
     $featureA = FeatureFactory::new()->create();
     $featureB = FeatureFactory::new()->isDisabled()->create();
 
@@ -31,7 +47,7 @@ it('can determine whether a feature has been disabled', function () {
     expect($this->model->disabled($featureB->name, $featureB->scope))->toBeTrue();
 });
 
-it('can determine whether a feature has been enabled', function () {
+it('can find and determine whether a feature has been enabled', function () {
     $featureA = FeatureFactory::new()->create();
     $featureB = FeatureFactory::new()->isDisabled()->create();
 
@@ -47,22 +63,39 @@ it('can find an existing feature', function () {
     expect($feature->name)->toBe($name);
 });
 
+it('can get the description', function () {
+    $feature = FeatureFactory::new()
+        ->withDescription($description = 'Blocks access to admin portal when disabled')
+        ->create();
+
+    expect($feature->getDescription())->toBe($description);
+});
+
+it('can get the label', function () {
+    $feature = FeatureFactory::new()
+        ->withLabel($label = 'Admin portal')
+        ->create();
+
+    expect($feature->getLabel())->toBe($label);
+});
+
+it('can get the message', function () {
+    $feature = FeatureFactory::new()
+        ->withMessage($message = 'Due to high traffic, we are temporarily unavailable.')
+        ->create();
+
+    expect($feature->getMessage())->toBe($message);
+});
+
+
 it('can toggle the state of a feature', function () {
     $feature = FeatureFactory::new()->create();
 
-    expect($feature->is_enabled)->toBeTrue();
+    expect($feature->isEnabled())->toBeTrue();
 
     $feature->toggle();
 
-    expect($feature->is_enabled)->toBeFalse();
-});
-
-it('has an is_enabled accessor', function () {
-    $featureA = FeatureFactory::new()->make();
-    $featureB = FeatureFactory::new()->isDisabled()->make();
-
-    expect($featureA->is_enabled)->toBeTrue();
-    expect($featureB->is_enabled)->toBeFalse();
+    expect($feature->isDisabled())->toBeTrue();
 });
 
 it('has a unique_name accessor', function () {

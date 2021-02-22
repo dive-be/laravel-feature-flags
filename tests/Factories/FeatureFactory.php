@@ -26,9 +26,19 @@ class FeatureFactory extends Factory
         ]);
     }
 
+    public function withDescription(string $description): self
+    {
+        return $this->state(compact('description'));
+    }
+
     public function withLabel(string $label): self
     {
         return $this->state(compact('label'));
+    }
+
+    public function withMessage(string $message): self
+    {
+        return $this->state(compact('message'));
     }
 
     public function withName(string $name): self

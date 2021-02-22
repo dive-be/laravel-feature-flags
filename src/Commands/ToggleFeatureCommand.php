@@ -27,8 +27,8 @@ class ToggleFeatureCommand extends Command
 
     private function printState(Feature $feature, string $emoji, string $occurrence)
     {
-        $state = $feature->is_enabled ? '<bg=green>active</>' : '<bg=red>inactive</>';
+        $state = $feature->isEnabled() ? '<bg=green>active</>' : '<bg=red>inactive</>';
 
-        $this->info("{$emoji}  The feature {$feature} is {$occurrence} {$state}.");
+        $this->info("{$emoji}  The feature {$feature->getLabel()} is {$occurrence} {$state}.");
     }
 }

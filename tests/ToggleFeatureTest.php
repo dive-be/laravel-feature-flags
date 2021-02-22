@@ -16,11 +16,11 @@ it('asks for confirmation in production', function () {
 it('can toggle the feature states', function () {
     $feature = FeatureFactory::new()->withName($name = 'dive')->create();
 
-    expect($feature->is_enabled)->toBeTrue();
+    expect($feature->isEnabled())->toBeTrue();
 
     artisan("feature:toggle {$name}")->execute();
 
-    expect($feature->refresh()->is_enabled)->toBeFalse();
+    expect($feature->refresh()->isEnabled())->toBeFalse();
 });
 
 it('throws if a feature cannot be found', function () {

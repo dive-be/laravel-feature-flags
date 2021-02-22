@@ -35,6 +35,11 @@ class Feature extends Model implements Contract
         self::saved(fn () => Cache::forget(self::CACHE));
     }
 
+    public function getUniqueNameAttribute(): string
+    {
+        return $this->scope.'.'.$this->name;
+    }
+
     public function disabled(string $name, ?string $scope = null): bool
     {
         return ! $this->enabled($name, $scope);
@@ -42,13 +47,13 @@ class Feature extends Model implements Contract
 
     public function enabled(string $name, ?string $scope = null): bool
     {
-        return $this->find($name, $scope)->is_enabled;
+        return $this->find($name, $scope)->isEnabled();
     }
 
     /**
      * @throws UnknownFeatureException
      */
-    public function find(string $name, ?string $scope = null): self
+    public function find(string $name, ?string $scope = null)
     {
         $scope ??= self::GENERAL;
 
@@ -63,21 +68,36 @@ class Feature extends Model implements Contract
         return $feature;
     }
 
-    public function getIsEnabledAttribute(): bool
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
+
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    public function isDisabled(): bool
+    {
+        return ! $this->isEnabled();
+    }
+
+    public function isEnabled(): bool
     {
         return is_null($this->disabled_at);
     }
 
-    public function getUniqueNameAttribute(): string
-    {
-        return $this->scope.'.'.$this->name;
-    }
-
     public function toggle(): bool
     {
-        $this->update(['disabled_at' => $this->is_enabled ? now() : null]);
+        $this->update(['disabled_at' => $this->isEnabled() ? now() : null]);
 
-        return $this->is_enabled;
+        return $this->isEnabled();
     }
 
     public function __toString()
