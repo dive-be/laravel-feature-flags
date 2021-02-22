@@ -44,7 +44,7 @@
     },
     "autoload": {
         "files": [
-            "src/Support/helpers.php"
+            "helpers.php"
         ],
         "psr-4": {
             "Dive\\FeatureFlags\\": "src"
