@@ -2,8 +2,8 @@
 
 namespace Tests;
 
-use Dive\FeatureFlags\Feature;
 use Dive\FeatureFlags\Middleware\EnsureFeatureIsEnabled;
+use Dive\FeatureFlags\Models\Feature;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Tests\Factories\FeatureFactory;

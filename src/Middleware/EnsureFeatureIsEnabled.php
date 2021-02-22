@@ -3,7 +3,7 @@
 namespace Dive\FeatureFlags\Middleware;
 
 use Closure;
-use Dive\FeatureFlags\Feature;
+use Dive\FeatureFlags\Models\Feature;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 

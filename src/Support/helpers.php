@@ -1,7 +1,7 @@
 <?php
 
 use Dive\FeatureFlags\Contracts\Feature as Contract;
-use Dive\FeatureFlags\Feature;
+use Dive\FeatureFlags\Models\Feature;
 
 if (! function_exists('feature')) {
     function feature(?string $name = null, ?string $scope = null): Feature

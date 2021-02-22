@@ -1,6 +1,6 @@
 <?php
 
-namespace Dive\FeatureFlags;
+namespace Dive\FeatureFlags\Models;
 
 use Dive\FeatureFlags\Contracts\Feature as Contract;
 use Dive\FeatureFlags\Exceptions\UnknownFeatureException;

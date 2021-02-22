@@ -4,7 +4,7 @@ namespace Tests;
 
 use Dive\FeatureFlags\Contracts\Feature as Contract;
 use Dive\FeatureFlags\Exceptions\UnknownFeatureException;
-use Dive\FeatureFlags\Feature;
+use Dive\FeatureFlags\Models\Feature;
 use Tests\Factories\FeatureFactory;
 
 beforeEach(function () {

@@ -2,8 +2,8 @@
 
 namespace Tests;
 
-use Dive\FeatureFlags\Feature;
-use Dive\FeatureFlags\TranslatableFeature;
+use Dive\FeatureFlags\Models\Feature;
+use Dive\FeatureFlags\Models\TranslatableFeature;
 use Spatie\Translatable\HasTranslations;
 
 beforeEach(function () {

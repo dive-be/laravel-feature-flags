@@ -1,6 +1,6 @@
 <?php
 
-namespace Dive\FeatureFlags;
+namespace Dive\FeatureFlags\Models;
 
 use Spatie\Translatable\HasTranslations;
 

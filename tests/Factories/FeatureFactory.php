@@ -2,7 +2,7 @@
 
 namespace Tests\Factories;
 
-use Dive\FeatureFlags\Feature;
+use Dive\FeatureFlags\Models\Feature;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class FeatureFactory extends Factory

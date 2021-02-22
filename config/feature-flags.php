@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'feature_model' => Dive\FeatureFlags\Feature::class,
+    'feature_model' => Dive\FeatureFlags\Models\Feature::class,
 ];

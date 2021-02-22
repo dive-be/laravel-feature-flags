@@ -3,8 +3,8 @@
 namespace Tests;
 
 use CreateFeaturesTable;
-use Dive\FeatureFlags\Feature;
 use Dive\FeatureFlags\FeatureFlagsServiceProvider;
+use Dive\FeatureFlags\Models\Feature;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
