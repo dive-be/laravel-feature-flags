@@ -3,12 +3,18 @@
 namespace Tests;
 
 use Dive\FeatureFlags\Contracts\Feature as Contract;
+use Dive\FeatureFlags\Events\FeatureToggled;
 use Dive\FeatureFlags\Exceptions\UnknownFeatureException;
 use Dive\FeatureFlags\Models\Feature;
+use Illuminate\Support\Facades\Event;
 use Tests\Factories\FeatureFactory;
 
 beforeEach(function () {
     $this->model = new Feature();
+});
+
+it('adheres to the contract', function () {
+    expect($this->model)->toBeInstanceOf(Contract::class);
 });
 
 it('allows identical feature names using distinct scopes', function () {
@@ -87,7 +93,6 @@ it('can get the message', function () {
     expect($feature->getMessage())->toBe($message);
 });
 
-
 it('can toggle the state of a feature', function () {
     $feature = FeatureFactory::new()->create();
 
@@ -98,14 +103,20 @@ it('can toggle the state of a feature', function () {
     expect($feature->isDisabled())->toBeTrue();
 });
 
+it('fires an event when toggled', function () {
+    $feature = FeatureFactory::new()->create();
+
+    Event::fake();
+
+    $feature->toggle();
+
+    Event::assertDispatched(FeatureToggled::class);
+});
+
 it('has a unique_name accessor', function () {
     $feature = FeatureFactory::new()->withScope($scope = 'webshop')->make();
 
     expect($feature->unique_name)->toBe($scope.'.'.$feature->name);
-});
-
-it('adheres to the contract', function () {
-    expect($this->model)->toBeInstanceOf(Contract::class);
 });
 
 it('is stringable', function () {

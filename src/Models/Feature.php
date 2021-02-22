@@ -3,6 +3,7 @@
 namespace Dive\FeatureFlags\Models;
 
 use Dive\FeatureFlags\Contracts\Feature as Contract;
+use Dive\FeatureFlags\Events\FeatureToggled;
 use Dive\FeatureFlags\Exceptions\UnknownFeatureException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
@@ -96,6 +97,8 @@ class Feature extends Model implements Contract
     public function toggle(): bool
     {
         $this->update(['disabled_at' => $this->isEnabled() ? now() : null]);
+
+        self::$dispatcher->dispatch(FeatureToggled::make($this));
 
         return $this->isEnabled();
     }
