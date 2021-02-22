@@ -5,7 +5,6 @@ namespace Dive\FeatureFlags;
 use Dive\FeatureFlags\Exceptions\UnknownFeatureException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
-use Spatie\Translatable\HasTranslations;
 
 /**
  * @property string              $description
@@ -19,8 +18,6 @@ use Spatie\Translatable\HasTranslations;
  */
 class Feature extends Model
 {
-    use HasTranslations;
-
     private const CACHE = 'feature_flags';
 
     private const GENERAL = '*';
@@ -30,8 +27,6 @@ class Feature extends Model
     protected $casts = ['disabled_at' => 'datetime'];
 
     protected $guarded = [];
-
-    protected $translatable = ['message'];
 
     public static function disabled(string $name, ?string $scope = null): bool
     {

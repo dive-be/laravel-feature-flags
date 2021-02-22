@@ -22,7 +22,7 @@ class FeatureFactory extends Factory
     {
         return $this->state([
             'disabled_at' => now(),
-            'message' => [app()->getLocale() => $this->faker->text],
+            'message' => $this->faker->text,
         ]);
     }
 
