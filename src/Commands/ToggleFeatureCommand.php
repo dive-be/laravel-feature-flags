@@ -2,7 +2,7 @@
 
 namespace Dive\FeatureFlags\Commands;
 
-use Dive\FeatureFlags\Feature;
+use Dive\FeatureFlags\Contracts\Feature;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Application;
 
@@ -12,16 +12,16 @@ class ToggleFeatureCommand extends Command
 
     protected $signature = 'feature:toggle {name} {scope?}';
 
-    public function handle(Application $app)
+    public function handle(Application $app, Feature $feature)
     {
-        $feature = Feature::find($this->argument('name'), $this->argument('scope'));
+        $found = $feature->find($this->argument('name'), $this->argument('scope'));
 
-        $this->printState($feature, 'ℹ️', 'currently');
+        $this->printState($found, 'ℹ️', 'currently');
 
         if (! $app->isProduction() || $this->confirm("🤔  Are you sure you'd like to continue?")) {
-            $feature->toggle();
+            $found->toggle();
 
-            $this->printState($feature, '🏁', 'now');
+            $this->printState($found, '🏁', 'now');
         }
     }
 

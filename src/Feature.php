@@ -2,6 +2,7 @@
 
 namespace Dive\FeatureFlags;
 
+use Dive\FeatureFlags\Contracts\Feature as Contract;
 use Dive\FeatureFlags\Exceptions\UnknownFeatureException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\Cache;
  * @property string              $scope
  * @property string              $unique_name
  */
-class Feature extends Model
+class Feature extends Model implements Contract
 {
     private const CACHE = 'feature_flags';
 
@@ -28,20 +29,26 @@ class Feature extends Model
 
     protected $guarded = [];
 
-    public static function disabled(string $name, ?string $scope = null): bool
+    protected static function booted()
     {
-        return ! self::enabled($name, $scope);
+        self::creating(fn (self $model) => $model->scope ??= self::GENERAL);
+        self::saved(fn () => Cache::forget(self::CACHE));
     }
 
-    public static function enabled(string $name, ?string $scope = null): bool
+    public function disabled(string $name, ?string $scope = null): bool
     {
-        return self::find($name, $scope)->is_enabled;
+        return ! $this->enabled($name, $scope);
+    }
+
+    public function enabled(string $name, ?string $scope = null): bool
+    {
+        return $this->find($name, $scope)->is_enabled;
     }
 
     /**
      * @throws UnknownFeatureException
      */
-    public static function find(string $name, ?string $scope = null): self
+    public function find(string $name, ?string $scope = null): self
     {
         $scope ??= self::GENERAL;
 
@@ -54,12 +61,6 @@ class Feature extends Model
         }
 
         return $feature;
-    }
-
-    protected static function booted()
-    {
-        self::creating(fn (self $model) => $model->scope ??= self::GENERAL);
-        self::saved(fn () => Cache::forget(self::CACHE));
     }
 
     public function getIsEnabledAttribute(): bool

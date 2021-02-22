@@ -4,6 +4,8 @@ namespace Dive\FeatureFlags;
 
 use Dive\FeatureFlags\Commands\ListFeatureCommand;
 use Dive\FeatureFlags\Commands\ToggleFeatureCommand;
+use Dive\FeatureFlags\Contracts\Feature;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
 class FeatureFlagsServiceProvider extends ServiceProvider
@@ -11,7 +13,7 @@ class FeatureFlagsServiceProvider extends ServiceProvider
     public function boot()
     {
         if ($this->app->runningInConsole()) {
-            $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+            $this->registerPublishables();
 
             $this->commands([
                 ListFeatureCommand::class,
@@ -20,6 +22,17 @@ class FeatureFlagsServiceProvider extends ServiceProvider
         }
 
         $this->registerBladeDirectives();
+    }
+
+    public function register()
+    {
+        $this->mergeConfigFrom(__DIR__.'/../config/feature-flags.php', 'feature-flags');
+
+        $this->app->singleton(Feature::class, static function (Application $app) {
+            $model = $app->make('config')->get('feature-flags.feature_model');
+
+            return new $model();
+        });
     }
 
     private function registerBladeDirectives()
@@ -33,5 +46,18 @@ class FeatureFlagsServiceProvider extends ServiceProvider
         $this->app['blade.compiler']->directive('enddisabled', fn () => '<?php unset($message);'
             .PHP_EOL.'if (isset($__messageOriginal)) { $message = $__messageOriginal; } '
             .PHP_EOL.'endif ?>');
+    }
+
+    private function registerPublishables()
+    {
+        if (! class_exists('CreateFeaturesTable')) {
+            $this->publishes([
+                __DIR__.'/../database/migrations/create_features_table.php.stub' => $this->app->databasePath('migrations/'.date('Y_m_d_His', time()).'_create_features_table.php'),
+            ], 'migrations');
+        }
+
+        $this->publishes([
+            __DIR__.'/../config/feature-flags.php' => $this->app->configPath('feature-flags.php'),
+        ], 'config');
     }
 }

@@ -2,17 +2,22 @@
 
 namespace Tests;
 
+use Dive\FeatureFlags\Contracts\Feature as Contract;
 use Dive\FeatureFlags\Exceptions\UnknownFeatureException;
 use Dive\FeatureFlags\Feature;
 use Tests\Factories\FeatureFactory;
+
+beforeEach(function () {
+    $this->model = new Feature();
+});
 
 it('allows identical feature names using distinct scopes', function () {
     $factory = FeatureFactory::new()->withName($name = 'onboarding');
     $factory->withScope($scopeA = 'admin')->create();
     $factory->withScope($scopeB = 'member')->create();
 
-    $featureA = Feature::find($name, $scopeA);
-    $featureB = Feature::find($name, $scopeB);
+    $featureA = $this->model->find($name, $scopeA);
+    $featureB = $this->model->find($name, $scopeB);
 
     expect($featureA->is($featureB))->toBeFalse();
     expect($featureA->unique_name)->not->toBe($featureB->unique_name);
@@ -22,22 +27,22 @@ it('can determine whether a feature has been disabled', function () {
     $featureA = FeatureFactory::new()->create();
     $featureB = FeatureFactory::new()->isDisabled()->create();
 
-    expect(Feature::disabled($featureA->name, $featureA->scope))->toBeFalse();
-    expect(Feature::disabled($featureB->name, $featureB->scope))->toBeTrue();
+    expect($this->model->disabled($featureA->name, $featureA->scope))->toBeFalse();
+    expect($this->model->disabled($featureB->name, $featureB->scope))->toBeTrue();
 });
 
 it('can determine whether a feature has been enabled', function () {
     $featureA = FeatureFactory::new()->create();
     $featureB = FeatureFactory::new()->isDisabled()->create();
 
-    expect(Feature::enabled($featureA->name, $featureA->scope))->toBeTrue();
-    expect(Feature::enabled($featureB->name, $featureB->scope))->toBeFalse();
+    expect($this->model->enabled($featureA->name, $featureA->scope))->toBeTrue();
+    expect($this->model->enabled($featureB->name, $featureB->scope))->toBeFalse();
 });
 
 it('can find an existing feature', function () {
     FeatureFactory::new()->withName($name = 'checkout')->create();
 
-    $feature = Feature::find($name);
+    $feature = $this->model->find($name);
 
     expect($feature->name)->toBe($name);
 });
@@ -66,6 +71,10 @@ it('has a unique_name accessor', function () {
     expect($feature->unique_name)->toBe($scope.'.'.$feature->name);
 });
 
+it('adheres to the contract', function () {
+    expect($this->model)->toBeInstanceOf(Contract::class);
+});
+
 it('is stringable', function () {
     $feature = FeatureFactory::new()->withLabel($label = 'Gift certificates')->create();
 
@@ -83,5 +92,5 @@ it('sets scope to "*" before creating', function () {
 });
 
 it('throws if a feature cannot be found', function () {
-    Feature::find('gibberish');
+    $this->model->find('gibberish');
 })->throws(UnknownFeatureException::class);

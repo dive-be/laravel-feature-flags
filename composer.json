@@ -67,7 +67,7 @@
     "extra": {
         "laravel": {
             "aliases": {
-                "Feature": "Dive\\FeatureFlags\\Feature"
+                "Feature": "Dive\\FeatureFlags\\Facades\\Feature"
             },
             "providers": [
                 "Dive\\FeatureFlags\\FeatureFlagsServiceProvider"
