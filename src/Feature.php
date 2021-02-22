@@ -19,9 +19,9 @@ use Illuminate\Support\Facades\Cache;
  */
 class Feature extends Model implements Contract
 {
-    private const CACHE = 'feature_flags';
+    public const CACHE = 'feature_flags';
 
-    private const GENERAL = '*';
+    public const GENERAL = '*';
 
     public $timestamps = false;
 
