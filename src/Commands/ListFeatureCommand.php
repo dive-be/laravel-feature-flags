@@ -2,8 +2,9 @@
 
 namespace Dive\FeatureFlags\Commands;
 
+use Dive\FeatureFlags\Contracts\Feature;
 use Illuminate\Console\Command;
-use Illuminate\Foundation\Application;
+use Illuminate\Database\Eloquent\Collection;
 
 class ListFeatureCommand extends Command
 {
@@ -18,8 +19,49 @@ class ListFeatureCommand extends Command
 
     protected array $headers = ['state', 'scope', 'name', 'label', 'description', 'message'];
 
-    public function handle(Application $app)
+    public function handle(Feature $feature)
     {
-        // noop
+        $features = $feature->getFeatures();
+
+        if ($features->isEmpty()) {
+            $this->error("The application doesn't have any registered features.");
+
+            return 1;
+        }
+
+        $features = $this->filterFeatures($features);
+
+        if ($features->isEmpty()) {
+            $this->error("The application doesn't have any features matching the given criteria.");
+
+            return 1;
+        }
+
+        $this->renderFeatures($features);
+    }
+
+    private function filterFeatures(Collection $features): Collection
+    {
+        foreach (['scope', 'enabled', 'disabled'] as $option) {
+            if ($value = $this->option($option)) {
+                $features = $features->where($option, $value);
+            }
+        }
+
+        return $features;
+    }
+
+    private function getHeaders(): array
+    {
+        if ($this->option('compact')) {
+            return array_slice($this->headers, 0, count($this->headers) >> 1);
+        }
+
+        return $this->headers;
+    }
+
+    private function renderFeatures(Collection $features)
+    {
+        $this->table($this->getHeaders(), $features);
     }
 }
