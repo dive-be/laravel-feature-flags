@@ -69,6 +69,12 @@ it('can find an existing feature', function () {
     expect($feature->name)->toBe($name);
 });
 
+it('can get all features', function () {
+    $features = FeatureFactory::times(5)->create();
+
+    expect($this->model->getFeatures()->pluck('id'))->toEqual($features->pluck('id'));
+});
+
 it('can get the description', function () {
     $feature = FeatureFactory::new()
         ->withDescription($description = 'Blocks access to admin portal when disabled')

@@ -2,10 +2,10 @@
 
 namespace Dive\FeatureFlags\Contracts;
 
+use Illuminate\Database\Eloquent\Collection;
+
 interface Feature
 {
-    public function getUniqueNameAttribute(): string;
-
     public function disabled(string $name, ?string $scope = null): bool;
 
     public function enabled(string $name, ?string $scope = null): bool;
@@ -13,6 +13,8 @@ interface Feature
     public function find(string $name, ?string $scope = null): self;
 
     public function getDescription(): string;
+
+    public function getFeatures(): Collection;
 
     public function getLabel(): string;
 

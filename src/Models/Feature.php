@@ -5,6 +5,7 @@ namespace Dive\FeatureFlags\Models;
 use Dive\FeatureFlags\Contracts\Feature as Contract;
 use Dive\FeatureFlags\Events\FeatureToggled;
 use Dive\FeatureFlags\Exceptions\UnknownFeatureException;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
@@ -72,6 +73,11 @@ class Feature extends Model implements Contract
     public function getDescription(): string
     {
         return $this->description;
+    }
+
+    public function getFeatures(): Collection
+    {
+        return $this->newQuery()->get();
     }
 
     public function getLabel(): string
