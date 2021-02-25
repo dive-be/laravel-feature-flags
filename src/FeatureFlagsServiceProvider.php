@@ -6,6 +6,7 @@ use Dive\FeatureFlags\Commands\InstallPackageCommand;
 use Dive\FeatureFlags\Commands\ListFeatureCommand;
 use Dive\FeatureFlags\Commands\ToggleFeatureCommand;
 use Dive\FeatureFlags\Contracts\Feature;
+use Dive\FeatureFlags\Middleware\EnsureFeatureIsEnabled;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,6 +25,8 @@ class FeatureFlagsServiceProvider extends ServiceProvider
         }
 
         $this->registerBladeDirectives();
+
+        $this->app->make('router')->aliasMiddleware('feature', EnsureFeatureIsEnabled::class);
     }
 
     public function register()
