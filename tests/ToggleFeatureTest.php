@@ -7,7 +7,7 @@ use function Pest\Laravel\artisan;
 use Tests\Factories\FeatureFactory;
 
 it('asks for confirmation in production', function () {
-    $this->app['env'] = 'production';
+    app()->env = 'production';
     FeatureFactory::new()->withName($name = 'dive')->create();
 
     artisan("feature:toggle {$name}")->expectsConfirmation("🤔  Are you sure you'd like to continue?");
