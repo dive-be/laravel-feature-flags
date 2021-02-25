@@ -10,6 +10,10 @@ beforeEach(function () {
     $this->model = new TranslatableFeature();
 });
 
+it('can create a new model via factories', function () {
+    expect(TranslatableFeature::factory()->make())->toBeInstanceOf(TranslatableFeature::class);
+});
+
 it('extends the base model', function () {
     expect($this->model)->toBeInstanceOf(Feature::class);
 });
