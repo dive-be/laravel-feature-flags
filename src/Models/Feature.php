@@ -41,6 +41,11 @@ class Feature extends Model implements Contract
         self::saved(fn () => Cache::forget(self::CACHE));
     }
 
+    protected static function newFactory()
+    {
+        return FeatureFactory::new();
+    }
+
     public function getUniqueNameAttribute(): string
     {
         return $this->scope.'.'.$this->name;
@@ -111,11 +116,6 @@ class Feature extends Model implements Contract
         self::$dispatcher->dispatch(FeatureToggled::make($this));
 
         return $this->isEnabled();
-    }
-
-    protected static function newFactory()
-    {
-        return FeatureFactory::new();
     }
 
     public function __toString()
