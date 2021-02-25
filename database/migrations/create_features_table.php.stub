@@ -14,7 +14,7 @@ class CreateFeaturesTable extends Migration
             $table->string('scope');
             $table->string('label');
             $table->string('description');
-            $table->string('message')->nullable(); // $table->json('message')->nullable();
+            $table->text('message')->nullable(); // $table->json('message')->nullable();
             $table->timestamp('disabled_at')->nullable();
 
             $table->unique(['scope', 'name']);
