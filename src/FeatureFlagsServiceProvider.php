@@ -2,6 +2,7 @@
 
 namespace Dive\FeatureFlags;
 
+use Dive\FeatureFlags\Commands\InstallPackageCommand;
 use Dive\FeatureFlags\Commands\ListFeatureCommand;
 use Dive\FeatureFlags\Commands\ToggleFeatureCommand;
 use Dive\FeatureFlags\Contracts\Feature;
@@ -16,6 +17,7 @@ class FeatureFlagsServiceProvider extends ServiceProvider
             $this->registerPublishables();
 
             $this->commands([
+                InstallPackageCommand::class,
                 ListFeatureCommand::class,
                 ToggleFeatureCommand::class,
             ]);
