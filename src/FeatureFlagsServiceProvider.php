@@ -34,9 +34,7 @@ class FeatureFlagsServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/feature-flags.php', 'feature-flags');
 
         $this->app->singleton(Feature::class, static function (Application $app) {
-            $model = $app->make('config')->get('feature-flags.feature_model');
-
-            return new $model();
+            return new ($app->make('config')->get('feature-flags.feature_model'))();
         });
     }
 
