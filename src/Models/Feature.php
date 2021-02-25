@@ -3,9 +3,11 @@
 namespace Dive\FeatureFlags\Models;
 
 use Dive\FeatureFlags\Contracts\Feature as Contract;
+use Dive\FeatureFlags\Database\Factories\FeatureFactory;
 use Dive\FeatureFlags\Events\FeatureToggled;
 use Dive\FeatureFlags\Exceptions\UnknownFeatureException;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
@@ -21,6 +23,8 @@ use Illuminate\Support\Facades\Cache;
  */
 class Feature extends Model implements Contract
 {
+    use HasFactory;
+
     public const CACHE = 'feature_flags';
 
     public const GENERAL = '*';
@@ -107,6 +111,11 @@ class Feature extends Model implements Contract
         self::$dispatcher->dispatch(FeatureToggled::make($this));
 
         return $this->isEnabled();
+    }
+
+    protected static function newFactory()
+    {
+        return FeatureFactory::new();
     }
 
     public function __toString()

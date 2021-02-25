@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Factories;
+namespace Dive\FeatureFlags\Database\Factories;
 
 use Dive\FeatureFlags\Models\Feature;
 use Illuminate\Database\Eloquent\Factories\Factory;

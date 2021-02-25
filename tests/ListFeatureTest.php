@@ -2,8 +2,8 @@
 
 namespace Tests;
 
+use Dive\FeatureFlags\Models\Feature;
 use function Pest\Laravel\artisan;
-use Tests\Factories\FeatureFactory;
 
 test('message is displayed if no features can be found', function () {
     artisan('feature:list')
@@ -12,7 +12,7 @@ test('message is displayed if no features can be found', function () {
 });
 
 test('message is displayed if filtering yields no results', function () {
-    FeatureFactory::new()->create();
+    Feature::factory()->create();
 
     artisan('feature:list --scope=void')
         ->assertExitCode(1)

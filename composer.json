@@ -48,7 +48,8 @@
             "helpers.php"
         ],
         "psr-4": {
-            "Dive\\FeatureFlags\\": "src"
+            "Dive\\FeatureFlags\\": "src",
+            "Dive\\FeatureFlags\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {

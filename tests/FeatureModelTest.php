@@ -7,7 +7,6 @@ use Dive\FeatureFlags\Events\FeatureToggled;
 use Dive\FeatureFlags\Exceptions\UnknownFeatureException;
 use Dive\FeatureFlags\Models\Feature;
 use Illuminate\Support\Facades\Event;
-use Tests\Factories\FeatureFactory;
 
 beforeEach(function () {
     $this->model = new Feature();
@@ -18,7 +17,7 @@ it('adheres to the contract', function () {
 });
 
 it('allows identical feature names using distinct scopes', function () {
-    $factory = FeatureFactory::new()->withName($name = 'onboarding');
+    $factory = Feature::factory()->withName($name = 'onboarding');
     $factory->withScope($scopeA = 'admin')->create();
     $factory->withScope($scopeB = 'member')->create();
 
@@ -30,39 +29,39 @@ it('allows identical feature names using distinct scopes', function () {
 });
 
 it('can determine whether a feature is enabled', function () {
-    $featureA = FeatureFactory::new()->make();
-    $featureB = FeatureFactory::new()->isDisabled()->make();
+    $featureA = Feature::factory()->make();
+    $featureB = Feature::factory()->isDisabled()->make();
 
     expect($featureA->isEnabled())->toBeTrue();
     expect($featureB->isEnabled())->toBeFalse();
 });
 
 it('can determine whether a feature is disabled', function () {
-    $featureA = FeatureFactory::new()->make();
-    $featureB = FeatureFactory::new()->isDisabled()->make();
+    $featureA = Feature::factory()->make();
+    $featureB = Feature::factory()->isDisabled()->make();
 
     expect($featureA->isDisabled())->toBeFalse();
     expect($featureB->isDisabled())->toBeTrue();
 });
 
 it('can find and determine whether a feature has been disabled', function () {
-    $featureA = FeatureFactory::new()->create();
-    $featureB = FeatureFactory::new()->isDisabled()->create();
+    $featureA = Feature::factory()->create();
+    $featureB = Feature::factory()->isDisabled()->create();
 
     expect($this->model->disabled($featureA->name, $featureA->scope))->toBeFalse();
     expect($this->model->disabled($featureB->name, $featureB->scope))->toBeTrue();
 });
 
 it('can find and determine whether a feature has been enabled', function () {
-    $featureA = FeatureFactory::new()->create();
-    $featureB = FeatureFactory::new()->isDisabled()->create();
+    $featureA = Feature::factory()->create();
+    $featureB = Feature::factory()->isDisabled()->create();
 
     expect($this->model->enabled($featureA->name, $featureA->scope))->toBeTrue();
     expect($this->model->enabled($featureB->name, $featureB->scope))->toBeFalse();
 });
 
 it('can find an existing feature', function () {
-    FeatureFactory::new()->withName($name = 'checkout')->create();
+    Feature::factory()->withName($name = 'checkout')->create();
 
     $feature = $this->model->find($name);
 
@@ -70,13 +69,13 @@ it('can find an existing feature', function () {
 });
 
 it('can get all features', function () {
-    $features = FeatureFactory::times(5)->create();
+    $features = Feature::factory(5)->create();
 
     expect($this->model->getFeatures()->pluck('id'))->toEqual($features->pluck('id'));
 });
 
 it('can get the description', function () {
-    $feature = FeatureFactory::new()
+    $feature = Feature::factory()
         ->withDescription($description = 'Blocks access to admin portal when disabled')
         ->create();
 
@@ -84,7 +83,7 @@ it('can get the description', function () {
 });
 
 it('can get the label', function () {
-    $feature = FeatureFactory::new()
+    $feature = Feature::factory()
         ->withLabel($label = 'Admin portal')
         ->create();
 
@@ -92,7 +91,7 @@ it('can get the label', function () {
 });
 
 it('can get the message', function () {
-    $feature = FeatureFactory::new()
+    $feature = Feature::factory()
         ->withMessage($message = 'Due to high traffic, we are temporarily unavailable.')
         ->create();
 
@@ -100,7 +99,7 @@ it('can get the message', function () {
 });
 
 it('can toggle the state of a feature', function () {
-    $feature = FeatureFactory::new()->create();
+    $feature = Feature::factory()->create();
 
     expect($feature->isEnabled())->toBeTrue();
 
@@ -110,7 +109,7 @@ it('can toggle the state of a feature', function () {
 });
 
 it('fires an event when toggled', function () {
-    $feature = FeatureFactory::new()->create();
+    $feature = Feature::factory()->create();
 
     Event::fake();
 
@@ -120,19 +119,19 @@ it('fires an event when toggled', function () {
 });
 
 it('has a unique_name accessor', function () {
-    $feature = FeatureFactory::new()->withScope($scope = 'webshop')->make();
+    $feature = Feature::factory()->withScope($scope = 'webshop')->make();
 
     expect($feature->unique_name)->toBe($scope.'.'.$feature->name);
 });
 
 it('is stringable', function () {
-    $feature = FeatureFactory::new()->withLabel($label = 'Gift certificates')->create();
+    $feature = Feature::factory()->withLabel($label = 'Gift certificates')->create();
 
     expect($feature->__toString())->toBe($label);
 });
 
 it('sets scope to "*" before creating', function () {
-    $feature = FeatureFactory::new()->make();
+    $feature = Feature::factory()->make();
 
     expect($feature->scope)->toBeNull();
 
