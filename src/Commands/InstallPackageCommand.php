@@ -12,6 +12,12 @@ class InstallPackageCommand extends Command
 
     public function handle()
     {
+        if ($this->isHidden()) {
+            $this->error('🤚  Feature flags is already installed.');
+
+            return 1;
+        }
+
         $this->line('🏎  Installing feature flags...');
         $this->line('📑  Publishing configuration...');
 
