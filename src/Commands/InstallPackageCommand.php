@@ -12,15 +12,15 @@ class InstallPackageCommand extends Command
 
     public function handle()
     {
-        $this->info('🏎  Installing feature flags...');
-        $this->info('📑  Publishing configuration...');
+        $this->line('🏎  Installing feature flags...');
+        $this->line('📑  Publishing configuration...');
 
         $this->call('vendor:publish', [
             '--provider' => "Dive\FeatureFlags\FeatureFlagsServiceProvider",
             '--tag' => 'config',
         ]);
 
-        $this->info('📑  Publishing migration...');
+        $this->line('📑  Publishing migration...');
 
         $this->call('vendor:publish', [
             '--provider' => "Dive\FeatureFlags\FeatureFlagsServiceProvider",
