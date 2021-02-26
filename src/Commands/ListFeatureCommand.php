@@ -40,7 +40,7 @@ class ListFeatureCommand extends Command
         $this->table(
             $headers = $this->getHeaders(),
             $features->map(fn ($feature) => array_values($feature->only($headers))),
-            'symfony-style-guide',
+            'box',
         );
     }
 
