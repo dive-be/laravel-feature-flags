@@ -5,7 +5,7 @@ namespace Tests;
 use function Pest\Laravel\artisan;
 
 it('copies the config', function () {
-    unlink($path = config_path('feature-flags.php'));
+    file_exists($path = config_path('feature-flags.php')) && unlink($path);
 
     artisan('feature:install')->execute();
 
