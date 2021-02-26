@@ -9,6 +9,8 @@ class TranslatableFeature extends Feature
 {
     use HasTranslations;
 
+    protected $table = 'features';
+
     protected array $translatable = ['message'];
 
     protected static function newFactory()
