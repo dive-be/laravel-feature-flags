@@ -17,7 +17,7 @@ class ListFeatureCommand extends Command
         {--scope= : Only display features for a single scope}
     ';
 
-    protected array $headers = ['state', 'scope', 'name', 'label', 'description', 'message'];
+    protected array $headers = ['state', 'name', 'scope', 'label', 'description', 'message'];
 
     public function handle(Feature $feature)
     {
@@ -37,15 +37,23 @@ class ListFeatureCommand extends Command
             return 1;
         }
 
-        $this->renderFeatures($features);
+        $this->table(
+            $headers = $this->getHeaders(),
+            $features->map(fn ($feature) => array_values($feature->only($headers))),
+            'symfony-style-guide',
+        );
     }
 
     private function filterFeatures(Collection $features): Collection
     {
-        foreach (['scope', 'enabled', 'disabled'] as $option) {
-            if ($value = $this->option($option)) {
-                $features = $features->where($option, $value);
-            }
+        if ($scope = $this->option('scope')) {
+            $features = $features->where('scope', $scope);
+        }
+
+        if ($disabled = $this->option('disabled')) {
+            $features = $features->whereNotNull('disabled_at');
+        } elseif ($enabled = $this->option('enabled')) {
+            $features = $features->whereNull('disabled_at');
         }
 
         return $features;
@@ -58,10 +66,5 @@ class ListFeatureCommand extends Command
         }
 
         return $this->headers;
-    }
-
-    private function renderFeatures(Collection $features)
-    {
-        $this->table($this->getHeaders(), $features);
     }
 }

@@ -18,3 +18,9 @@ test('message is displayed if filtering yields no results', function () {
         ->assertExitCode(1)
         ->expectsOutput("The application doesn't have any features matching the given criteria.");
 });
+
+test('features can be listed', function () {
+    Feature::factory()->create();
+
+    artisan('feature:list')->assertExitCode(0);
+});
