@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Cache;
  * @property string|null         $message
  * @property string              $name
  * @property string              $scope
+ * @property string              $state
  * @property string              $unique_name
  */
 class Feature extends Model implements Contract
@@ -44,6 +45,11 @@ class Feature extends Model implements Contract
     protected static function newFactory()
     {
         return FeatureFactory::new();
+    }
+
+    public function getStateAttribute(): string
+    {
+        return $this->isEnabled() ? '<fg=green>enabled</>' : '<fg=red>disabled</>';
     }
 
     public function getUniqueNameAttribute(): string
@@ -97,6 +103,11 @@ class Feature extends Model implements Contract
     public function getMessage(): ?string
     {
         return $this->message;
+    }
+
+    public function getState(): string
+    {
+        return $this->getStateAttribute();
     }
 
     public function isDisabled(): bool

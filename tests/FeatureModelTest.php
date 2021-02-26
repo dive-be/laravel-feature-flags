@@ -118,6 +118,16 @@ it('fires an event when toggled', function () {
     Event::assertDispatched(FeatureToggled::class);
 });
 
+it('has a state accessor and getter', function () {
+    $featureA = Feature::factory()->make();
+    $featureB = Feature::factory()->isDisabled()->make();
+
+    expect($featureA->state)->toBe('<fg=green>enabled</>');
+    expect($featureB->state)->toBe('<fg=red>disabled</>');
+    expect($featureA->getState())->toBe('<fg=green>enabled</>');
+    expect($featureB->getState())->toBe('<fg=red>disabled</>');
+});
+
 it('has a unique_name accessor', function () {
     $feature = Feature::factory()->withScope($scope = 'webshop')->make();
 

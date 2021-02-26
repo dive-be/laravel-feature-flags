@@ -20,6 +20,8 @@ interface Feature
 
     public function getMessage(): ?string;
 
+    public function getState(): string;
+
     public function isDisabled(): bool;
 
     public function isEnabled(): bool;
