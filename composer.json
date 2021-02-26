@@ -43,6 +43,9 @@
         "phpunit/phpunit": "^9.0",
         "spatie/laravel-translatable": "^4.0"
     },
+    "suggest": {
+        "spatie/laravel-translatable": "Required for defining messages for multiple locales"
+    },
     "autoload": {
         "files": [
             "src/helpers.php"
