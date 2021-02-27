@@ -10,6 +10,8 @@ it('copies the config', function () {
     artisan('feature:install')->execute();
 
     expect(file_exists($path))->toBeTrue();
+
+    unlink($path);
 });
 
 it('copies the migration', function () {
