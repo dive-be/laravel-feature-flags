@@ -7,6 +7,9 @@ use Dive\FeatureFlags\Commands\ListFeatureCommand;
 use Dive\FeatureFlags\Commands\ToggleFeatureCommand;
 use Dive\FeatureFlags\Contracts\Feature;
 use Dive\FeatureFlags\Middleware\EnsureFeatureIsEnabled;
+use Illuminate\Auth\Access\Response;
+use Illuminate\Contracts\Auth\Access\Gate;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
@@ -27,6 +30,8 @@ class FeatureFlagsServiceProvider extends ServiceProvider
         $this->registerBladeDirectives();
 
         $this->app->make('router')->aliasMiddleware('feature', EnsureFeatureIsEnabled::class);
+
+        $this->registerAtGate();
     }
 
     public function register()
@@ -35,6 +40,19 @@ class FeatureFlagsServiceProvider extends ServiceProvider
 
         $this->app->singleton(Feature::class, static function (Application $app) {
             return new ($app->make('config')->get('feature-flags.feature_model'))();
+        });
+    }
+
+    private function registerAtGate()
+    {
+        $this->app->make(Gate::class)->define('feature', function (?Authenticatable $user, $name, $scope = null) {
+            $feature = $this->app->make(Feature::class);
+
+            if ($feature->disabled($name, $scope)) {
+                return Response::deny($feature->find($name, $scope)->getMessage());
+            }
+
+            return Response::allow();
         });
     }
 
