@@ -101,7 +101,7 @@ class FeatureFlagsServiceProvider extends ServiceProvider
             $stub = __DIR__.'/../database/migrations/create_features_table.php.stub';
 
             $this->publishes([
-                $stub => $this->app->databasePath("migrations/'{$timestamp}'_create_features_table.php"),
+                $stub => $this->app->databasePath("migrations/{$timestamp}_create_features_table.php"),
             ], 'migrations');
         }
     }
