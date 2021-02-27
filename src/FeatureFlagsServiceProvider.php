@@ -70,15 +70,23 @@ class FeatureFlagsServiceProvider extends ServiceProvider
 
     private function registerDirectives()
     {
-        $this->app->make('blade.compiler')->directive('disabled', fn ($expression) => "<?php if (feature_disabled({$expression})) : "
-            .PHP_EOL.'if (isset($message)) { $__messageOriginal = $message; } '
-            .PHP_EOL.'$message = feature('.$expression.')->message; ?>');
+        $blade = $this->app->make('blade.compiler');
 
-        $this->app->make('blade.compiler')->directive('enabled', fn () => '<?php else: ?>');
+        $blade->directive('disabled', fn ($expression) => empty($expression)
+            ? '<?php else: ?>'
+            : "<?php if (feature_disabled({$expression})) : "
+                .PHP_EOL.'if (isset($message)) { $__messageOriginal = $message; } '
+                .PHP_EOL.'$message = feature('.$expression.')->message; ?>');
 
-        $this->app->make('blade.compiler')->directive('enddisabled', fn () => '<?php unset($message);'
+        $blade->directive('enabled', fn ($expression) => empty($expression)
+            ? '<?php else: ?>'
+            : "<?php if (feature_enabled({$expression})) : ?>");
+
+        $blade->directive('enddisabled', fn () => '<?php unset($message);'
             .PHP_EOL.'if (isset($__messageOriginal)) { $message = $__messageOriginal; } '
             .PHP_EOL.'endif ?>');
+
+        $blade->directive('endenabled', fn () => '<?php endif ?>');
     }
 
     private function registerMiddleware()
