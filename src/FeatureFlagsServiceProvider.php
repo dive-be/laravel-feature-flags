@@ -10,7 +10,7 @@ use Dive\FeatureFlags\Middleware\EnsureFeatureIsEnabled;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Foundation\Application;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
 class FeatureFlagsServiceProvider extends ServiceProvider
