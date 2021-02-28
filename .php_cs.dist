@@ -21,6 +21,7 @@ $dive = [
             'try',
         ],
     ],
+    'braces' => null,
     'increment_style' => ['style' => 'post'],
     'is_null' => false,
     'lowercase_constants' => true,

@@ -9,9 +9,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class EnsureFeatureIsEnabled
 {
-    public function __construct(private Feature $feature)
-    {
-    }
+    public function __construct(private Feature $feature) {}
 
     public function handle(Request $request, Closure $next, string $name, ?string $scope = null)
     {
