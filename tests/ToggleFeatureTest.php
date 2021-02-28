@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Dive\FeatureFlags\Exceptions\UnknownFeatureException;
 use Dive\FeatureFlags\Models\Feature;
 use function Pest\Laravel\artisan;
 
@@ -24,6 +23,8 @@ it('can toggle the feature states', function () {
     expect($feature->refresh()->isEnabled())->toBeFalse();
 });
 
-it('throws if a feature cannot be found', function () {
-    artisan('feature:toggle gibberish')->execute();
-})->throws(UnknownFeatureException::class);
+it('displays exception message properly if feature could not be found', function () {
+    artisan('feature:toggle gibberish')
+        ->assertExitCode(1)
+        ->expectsOutput('🕵  The requested feature *:gibberish could not be found.');
+});

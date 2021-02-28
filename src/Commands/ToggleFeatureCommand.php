@@ -3,6 +3,7 @@
 namespace Dive\FeatureFlags\Commands;
 
 use Dive\FeatureFlags\Contracts\Feature;
+use Dive\FeatureFlags\Exceptions\UnknownFeatureException;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Application;
 
@@ -14,7 +15,13 @@ class ToggleFeatureCommand extends Command
 
     public function handle(Application $app, Feature $feature)
     {
-        $found = $feature->find($this->argument('name'), $this->argument('scope'));
+        try {
+            $found = $feature->find($this->argument('name'), $this->argument('scope'));
+        } catch (UnknownFeatureException $ex) {
+            $this->line("🕵  <fg=red>{$ex->getMessage()}");
+
+            return 1;
+        }
 
         if (
             ! $app->isProduction()
