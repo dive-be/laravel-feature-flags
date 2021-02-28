@@ -2,6 +2,7 @@
 
 namespace Dive\FeatureFlags;
 
+use Dive\FeatureFlags\Commands\ClearCacheCommand;
 use Dive\FeatureFlags\Commands\InstallPackageCommand;
 use Dive\FeatureFlags\Commands\ListFeatureCommand;
 use Dive\FeatureFlags\Commands\ToggleFeatureCommand;
@@ -53,6 +54,7 @@ class FeatureFlagsServiceProvider extends ServiceProvider
     private function registerCommands()
     {
         $this->commands([
+            ClearCacheCommand::class,
             InstallPackageCommand::class,
             ListFeatureCommand::class,
             ToggleFeatureCommand::class,
