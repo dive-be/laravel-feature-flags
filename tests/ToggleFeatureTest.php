@@ -8,9 +8,10 @@ use function Pest\Laravel\artisan;
 
 it('asks for confirmation in production', function () {
     app()->env = 'production';
-    Feature::factory()->withName($name = 'dive')->create();
+    $feature = Feature::factory()->withName($name = 'dive')->create();
 
-    artisan("feature:toggle {$name}")->expectsConfirmation("🤔  Are you sure you'd like to continue?");
+    artisan("feature:toggle {$name}")
+        ->expectsConfirmation("🤔  Are you sure you'd like to continue? [currently {$feature->getState()}]");
 });
 
 it('can toggle the feature states', function () {
