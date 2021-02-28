@@ -2,13 +2,19 @@
 
 This package will assist you in flagging certain parts of your application as (in)active.
 
+⚠️ Minor releases of this package may cause breaking changes as it has no stable release yet.
+
+## What problem does this package solve?
+
+"A feature flag is a software development process used to enable or disable functionality remotely without deploying code. New features can be deployed without making them visible to users. Feature flags help decouple deployment from release letting you manage the full lifecycle of a feature." ([Source](https://launchdarkly.com/blog/what-are-feature-flags))
+
 ## Installation
 
 ```shell
 composer require dive-be/laravel-feature-flags
 ```
 
-Once composer has finished, you should publish the configuration and migration:
+Once composer has finished, you must publish the configuration and migration:
 
 ```shell
 php artisan feature:install
@@ -155,9 +161,41 @@ This package provides a `feature` middleware to guard certain parts of your appl
 Route::middleware('feature:registrations')->get('registrations', RegistrationsController::class);
 ```
 
-## What problem does this package solve?
+### Toggling a feature on/off
 
-WIP 
+Since the features are managed through a `Feature` Eloquent model, you may use solutions such as Laravel Nova. 
+
+However, when developing locally, you might want to easily turn a feature on/off. You can do this using the command below:
+
+```
+php artisan feature:toggle {name} {scope?}
+```
+
+### Displaying list of all features
+
+Use the command below to display a table of all features and their corresponding state:
+
+```shell
+php artisan feature:list
+```
+
+Available options: `compact`, `disabled`, `enabled`, `scope`.
+
+### Clearing the cache
+
+The features are cached to speed up subsequent checks. If you don't use Eloquent to update or alter records, you must reset the cache:
+
+```shell
+php artisan feature:clear
+```
+
+## Testing
+
+You can run tests with:
+
+```shell
+composer test
+```
 
 ## Credits
 
