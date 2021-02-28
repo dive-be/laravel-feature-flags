@@ -92,7 +92,11 @@ class Feature extends Model implements Contract
 
     public function getFeatures(): Collection
     {
-        return $this->newQuery()->get();
+        return $this
+            ->newQuery()
+            ->orderBy('scope')
+            ->orderBy('name')
+            ->get();
     }
 
     public function getLabel(): string

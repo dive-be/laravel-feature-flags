@@ -71,7 +71,7 @@ it('can find an existing feature', function () {
 it('can get all features', function () {
     $features = Feature::factory(5)->create();
 
-    expect($this->model->getFeatures()->pluck('id'))->toEqual($features->pluck('id'));
+    expect($this->model->getFeatures()->pluck('id'))->toEqualCanonicalizing($features->pluck('id'));
 });
 
 it('can get the description', function () {
