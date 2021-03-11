@@ -10,3 +10,4 @@
 /.php_cs.dist       export-ignore
 /phpstan.neon.dist  export-ignore
 /testbench.yaml     export-ignore
+/CONTRIBUTING.md    export-ignore
