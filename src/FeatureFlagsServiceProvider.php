@@ -12,6 +12,7 @@ use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 
 class FeatureFlagsServiceProvider extends ServiceProvider
@@ -40,15 +41,18 @@ class FeatureFlagsServiceProvider extends ServiceProvider
 
     private function registerAtGate()
     {
-        $this->app->make(Gate::class)->define('feature', function (?Authenticatable $user, $name, $scope = null) {
-            $feature = $this->app->make(Feature::class);
+        $this->app->make(Gate::class)->define(
+            'feature',
+            function (?Authenticatable $user, string $name, ?string $scope = null) {
+                $feature = $this->app->make(Feature::class);
 
-            if ($feature->disabled($name, $scope)) {
-                return Response::deny($feature->find($name, $scope)->getMessage());
+                if ($feature->disabled($name, $scope)) {
+                    return Response::deny($feature->find($name, $scope)->getMessage());
+                }
+
+                return Response::allow();
             }
-
-            return Response::allow();
-        });
+        );
     }
 
     private function registerCommands()
@@ -98,12 +102,16 @@ class FeatureFlagsServiceProvider extends ServiceProvider
 
     private function registerMigration()
     {
-        if (! class_exists('CreateFeaturesTable')) {
+        $migration = 'create_features_table.php';
+        $doesntExist = Collection::make(glob($this->app->databasePath('migrations/*.php')))
+            ->every(fn ($filename) => ! str_ends_with($filename, $migration));
+
+        if ($doesntExist) {
             $timestamp = date('Y_m_d_His', time());
-            $stub = __DIR__.'/../database/migrations/create_features_table.php.stub';
+            $stub = __DIR__."/../database/migrations/{$migration}.stub";
 
             $this->publishes([
-                $stub => $this->app->databasePath("migrations/{$timestamp}_create_features_table.php"),
+                $stub => $this->app->databasePath("migrations/{$timestamp}_{$migration}"),
             ], 'migrations');
         }
     }

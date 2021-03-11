@@ -1,4 +1,6 @@
-# Laravel Feature Flags
+# Handle feature flags within your app
+
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/dive-be/laravel-feature-flags.svg?style=flat-square)](https://packagist.org/packages/:vendor_name/:package_name)
 
 This package will assist you in flagging certain parts of your application as (in)active.
 
@@ -9,6 +11,8 @@ This package will assist you in flagging certain parts of your application as (i
 "A feature flag is a software development process used to enable or disable functionality remotely without deploying code. New features can be deployed without making them visible to users. Feature flags help decouple deployment from release letting you manage the full lifecycle of a feature." ([Source](https://launchdarkly.com/blog/what-are-feature-flags))
 
 ## Installation
+
+You can install the package via composer:
 
 ```shell
 composer require dive-be/laravel-feature-flags
@@ -190,17 +194,25 @@ php artisan feature:clear
 ```
 
 ## Testing
-
-You can run tests with:
-
 ```shell
 composer test
 ```
 
+## Changelog
+
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+
+## Contributing
+
+Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
+
+## Security
+
+If you discover any security related issues, please email oss@dive.be instead of using the issue tracker.
+
 ## Credits
 
 - [Muhammed Sari](https://github.com/mabdullahsari)
-- [Nico Verbruggen](https://github.com/nicoverbruggen)
 - [All Contributors](../../contributors)
 
 ## License

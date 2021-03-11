@@ -4,20 +4,19 @@ namespace Tests;
 
 use function Pest\Laravel\artisan;
 
-it('copies the config', function () {
-    file_exists($path = config_path('feature-flags.php')) && unlink($path);
+afterEach(function () {
+    file_exists(config_path('feature-flags.php')) && unlink(config_path('feature-flags.php'));
+    array_map('unlink', glob(database_path('migrations/*_create_features_table.php')));
+});
 
+it('copies the config', function () {
     artisan('feature:install')->execute();
 
-    expect(file_exists($path))->toBeTrue();
-
-    unlink($path);
+    expect(file_exists(config_path('feature-flags.php')))->toBeTrue();
 });
 
 it('copies the migration', function () {
-    array_map('unlink', glob($path = database_path('migrations/*_create_features_table.php')));
-
     artisan('feature:install')->execute();
 
-    expect(glob($path))->toHaveCount(1);
+    expect(glob(database_path('migrations/*_create_features_table.php')))->toHaveCount(1);
 });
