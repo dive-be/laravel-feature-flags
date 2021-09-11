@@ -68,7 +68,7 @@ $table->timestamp('disabled_at')->nullable();
 
 ## Usage
 
-_For a full list of what's available to you, please refer to the [Feature contract](https://github.com/dive-be/laravel-feature-flags/blob/master/src/Contracts/Feature.php) for an exhaustive list._
+For a full list of what's available to you, please refer to the _[Feature contract](https://github.com/dive-be/laravel-feature-flags/blob/master/src/Contracts/Feature.php)_ for an exhaustive list.
 
 ### Setting up your app's initial features
 
@@ -167,7 +167,7 @@ Refer to the [Feature contract](https://github.com/dive-be/laravel-feature-flags
 
 ### Changing the default wildcard scope
 
-If you wish to use a different scope rather than the `*` sign the package uses by default when creating and checking/verifying features, you may change this in your `AppServiceProvider`s `boot` method:
+If you wish to use a different scope rather than the `*` sign the package uses by default when creating and checking/verifying features, you may change this in your `AppServiceProvider`'s `boot` method:
 
 ```php
 use Dive\FeatureFlags\Models\Feature;
