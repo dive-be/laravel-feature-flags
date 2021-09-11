@@ -26,3 +26,10 @@ if (! function_exists('feature_enabled')) {
         return app('feature')->enabled($name, $scope);
     }
 }
+
+if (! function_exists('feature_verify')) {
+    function feature_verify(string $name, ?string $scope = null)
+    {
+        app('feature')->verify($name, $scope);
+    }
+}

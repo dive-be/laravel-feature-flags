@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Dive\FeatureFlags\Contracts\Feature as Contract;
+use Dive\FeatureFlags\Exceptions\FeatureDisabledException;
 use Dive\FeatureFlags\Models\Feature;
 
 test('feature finds and returns a specific feature', function () {
@@ -31,4 +32,14 @@ test('feature_enabled determines whether a feature has been enabled', function (
 
     expect(feature_enabled($featureA->name, $featureA->scope))->toBeTrue();
     expect(feature_enabled($featureB->name, $featureB->scope))->toBeFalse();
+});
+
+test('feature_verify can verify a given feature', function () {
+    $feature = Feature::factory()->withName('dashboard')->create();
+
+    expect(fn () => feature_verify('dashboard'))->not->toThrow(FeatureDisabledException::class);
+
+    $feature->toggle();
+
+    expect(fn () => feature_verify('dashboard'))->toThrow(FeatureDisabledException::class);
 });
