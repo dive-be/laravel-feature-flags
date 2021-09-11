@@ -20,7 +20,7 @@ class ToggleFeatureCommand extends Command
         } catch (UnknownFeatureException $ex) {
             $this->line("🕵  <fg=red>{$ex->getMessage()}");
 
-            return 1;
+            return self::FAILURE;
         }
 
         if (
@@ -31,5 +31,7 @@ class ToggleFeatureCommand extends Command
 
             $this->line("👉  The feature <fg=yellow>{$found->getLabel()}</> is now {$found->getState()}");
         }
+
+        return self::SUCCESS;
     }
 }

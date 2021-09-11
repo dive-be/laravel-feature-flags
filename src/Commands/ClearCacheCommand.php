@@ -17,5 +17,7 @@ class ClearCacheCommand extends Command
         $cache->store()->forget(Feature::CACHE);
 
         $this->info('🔥  Feature flags cache cleared.');
+
+        return self::SUCCESS;
     }
 }

@@ -15,7 +15,7 @@ class InstallPackageCommand extends Command
         if ($this->isHidden()) {
             $this->error('🤚  Feature flags is already installed.');
 
-            return 1;
+            return self::FAILURE;
         }
 
         $this->line('🏎  Installing feature flags...');
@@ -34,6 +34,8 @@ class InstallPackageCommand extends Command
         ]);
 
         $this->info('🏁  Feature flags installed successfully!');
+
+        return self::SUCCESS;
     }
 
     public function isHidden()

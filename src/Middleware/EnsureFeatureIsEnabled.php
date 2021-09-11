@@ -11,8 +11,12 @@ class EnsureFeatureIsEnabled
 {
     public function __construct(private Feature $feature) {}
 
-    public function handle(Request $request, Closure $next, string $name, ?string $scope = null)
-    {
+    public function handle(
+        Request $request,
+        Closure $next,
+        string $name,
+        ?string $scope = null,
+    ) {
         if ($this->feature->disabled($name, $scope)) {
             throw new AccessDeniedHttpException($this->feature->find($name, $scope)->getMessage());
         }
