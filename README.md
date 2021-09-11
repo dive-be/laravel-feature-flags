@@ -68,6 +68,8 @@ $table->timestamp('disabled_at')->nullable();
 
 ## Usage
 
+_For a full list of what's available to you, please refer to the [Feature contract](https://github.com/dive-be/laravel-feature-flags/blob/master/src/Contracts/Feature.php) for an exhaustive list._
+
 ### Setting up your app's initial features
 
 Seeding the (initial) features can be done in a regular Laravel seeder.
@@ -155,12 +157,40 @@ public function index(Feature $feature)
 app('feature')->find('dashboard');
 ```
 
-## Blade directives
+## Scoping
+
+The package allows you to define a custom scope along with the feature (not to be confused with Laravel's global scopes). 
+Particularly useful when you need to use the same name for different parts of your application. 
+Most of the package's functions/methods accept an additional `$scope` argument.
+
+Refer to the [Feature contract](https://github.com/dive-be/laravel-feature-flags/blob/master/src/Contracts/Feature.php) for an exhaustive list.
+
+### Changing the default wildcard scope
+
+If you wish to use a different scope rather than the `*` sign the package uses by default when creating and checking/verifying features, you may change this in your `AppServiceProvider`s `boot` method:
+
+```php
+use Dive\FeatureFlags\Models\Feature;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot()
+    {
+        Feature::setDefaultScope('my-wonderful-app');
+    }
+}
+```
+
+### Seeding 
+
+Refer to the [seeding section](#setting-up-your-apps-initial-features) above on how to scope your features.
+
+## Blade directives 🗡
 
 ### @disabled
 
-You can use the `@disabled` directive to conditionally display content in your views depending on a feature's current state. 
-Using this directive first will make the feature's `message` property automatically available as a variable inside the block. Examples:
+You can use the `@disabled` directive to conditionally display content in your views depending on a feature's current state.
+Using this directive first will make the feature's `message` property automatically available as a scoped variable inside the block. Examples:
 
 ```blade
 @disabled('registrations')
@@ -176,7 +206,7 @@ Using this directive first will make the feature's `message` property automatica
 
 ### @enabled
 
-You can also use the `@enabled` directive to do the same thing as above. However, the `$message` variable will **not** be available inside the `@disabled` block when using this directive.
+You can also use the `@enabled` directive to do the same thing as above. However, the `$message` variable will **not** be available inside the `@disabled` block when using this directive __first__.
 
 ```blade
 @enabled('registrations')
@@ -186,21 +216,96 @@ You can also use the `@enabled` directive to do the same thing as above. However
 @endenabled
 ```
 
-## Guarding parts of your application
+### @can(not)
+
+This package also registers itself at [Laravel's Gate](https://laravel.com/docs/8.x/authorization#gates). The visitor does not have to be auhenticated in order to use it:
+
+```php
+@can('feature', 'dashboard')
+    <a href="/dashboard" target="_blank">View Dashboard</a>
+@else
+    <small>Dashboard is currently disabled</small>
+@endcan
+```
+
+## Guarding parts of your application 💂🏼
+
+There are multiple ways to prevent users from accessing disabled parts of your application.
+
+A `FeatureDisabledException` will be thrown in all cases if the feature is not enabled.
 
 ### Route middleware
 
-This package provides a `feature` middleware to guard certain parts of your application. An `AccessDeniedHttpException` (403) will be thrown if the feature is disabled.
-
 ```php
-Route::middleware('feature:registrations')->get('registrations', RegistrationsController::class);
+Route::get('registrations', [RegistrationsController::class, 'index'])->middleware('feature:registrations');
 ```
 
-## Artisan commands
+### Manual checking using 'verify'
+
+#### Controller example
+
+Assume your typical controller:
+
+```php
+class RegistrationsController extends Controller
+{
+    public function __construct(Feature $feature)
+    {
+        $feature->verify('registrations');
+    }
+    
+    public function index()
+    {
+        return view('registrations.index');
+    }
+}
+```
+
+#### Livewire example
+
+This is especially useful in contexts where you cannot really use route middleware, such as [Livewire actions](https://laravel-livewire.com/docs/2.x/actions):
+
+```php
+use Dive\FeatureFlags\Facades\Feature;
+use Dive\Wishlist\Facades\Wishlist;
+
+class HeartButton extends Component
+{
+    public function add($id)
+    {
+        Feature::verify('wishlist');
+        
+        Wishlist::add($id);
+    }
+
+    public function render()
+    {
+        return view('livewire.heart-button');
+    }
+}
+```
+
+> PS: Be sure to check out our [Wishlist package](https://github.com/dive-be/laravel-wishlist) as well 😉
+
+### Access Gate
+
+This package also registers itself at [Laravel's Gate](https://laravel.com/docs/8.x/authorization#gates) providing you the ability to check a feature's state through them. This means that you can do things like the following:
+
+```php
+Route::get(...)->middleware('can:feature,dashboard');
+```
+
+```php
+Gate::authorize('feature', 'dashboard');
+```
+
+**However**, there is one key difference. Laravel's Gate will throw an `AccessDeniedHttpException`, while the package's own checks will throw a `FeatureDisabledException` (which extends the former exception class). So, if you need to know the exception's type, you are highly adviced **not** to use gates.
+
+## Artisan commands 🧑‍🎨
 
 ### Toggling a feature on/off
 
-Since the features are managed through a `Feature` Eloquent model, you can use solutions such as Laravel Nova. 
+Since the features are managed through a `Feature` Eloquent model, you can definitely use solutions such as Laravel Nova to do this.
 
 However, when developing locally, you might want to easily turn a feature on/off. You can do this using the command below:
 
@@ -220,11 +325,13 @@ Available options: `compact`, `disabled`, `enabled`, `scope`.
 
 ### Clearing the cache
 
-The features are cached to speed up subsequent checks. If you don't use Eloquent to update or alter records, you must reset the cache:
+The features are cached forever to speed up subsequent checks. If you don't use Eloquent to update or alter records, you must reset the cache manually:
 
 ```shell
 php artisan feature:clear
 ```
+
+> Note: when you create/update features through Eloquent, the cache busting is done for you automatically.
 
 ## Testing
 ```shell
