@@ -10,7 +10,7 @@ class FeatureObserver
 {
     public function creating(Feature $feature)
     {
-        $feature->scope ??= Feature::GENERAL;
+        $feature->scope ??= Feature::getDefaultScope();
     }
 
     public function saved()

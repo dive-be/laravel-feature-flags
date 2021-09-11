@@ -27,7 +27,7 @@ class Feature extends Model implements Contract
 {
     use HasFactory;
 
-    public const GENERAL = '*';
+    private static string $default = '*';
 
     public $timestamps = false;
 
@@ -35,19 +35,19 @@ class Feature extends Model implements Contract
 
     protected $guarded = [];
 
+    public static function getDefaultScope(): string
+    {
+        return static::$default;
+    }
+
+    public static function setDefaultScope(string $scope)
+    {
+        static::$default = $scope;
+    }
+
     protected static function newFactory()
     {
         return FeatureFactory::new();
-    }
-
-    public function getStateAttribute(): string
-    {
-        return $this->isEnabled() ? '<fg=green>enabled</>' : '<fg=red>disabled</>';
-    }
-
-    public function getUniqueNameAttribute(): string
-    {
-        return $this->scope.'.'.$this->name;
     }
 
     public function disabled(string $name, ?string $scope = null): bool
@@ -65,7 +65,7 @@ class Feature extends Model implements Contract
      */
     public function find(string $name, ?string $scope = null): self
     {
-        $scope ??= self::GENERAL;
+        $scope ??= static::$default;
 
         $feature = Cache::rememberForever(Config::get('feature-flags.cache_key'), function () {
             return self::all()->keyBy(fn (self $feature) => $feature->unique_name);
@@ -76,6 +76,16 @@ class Feature extends Model implements Contract
         }
 
         return $feature;
+    }
+
+    public function getStateAttribute(): string
+    {
+        return $this->isEnabled() ? '<fg=green>enabled</>' : '<fg=red>disabled</>';
+    }
+
+    public function getUniqueNameAttribute(): string
+    {
+        return $this->scope.'.'.$this->name;
     }
 
     public function getDescription(): string
