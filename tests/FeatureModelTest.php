@@ -4,6 +4,7 @@ namespace Tests;
 
 use Dive\FeatureFlags\Contracts\Feature as Contract;
 use Dive\FeatureFlags\Events\FeatureToggled;
+use Dive\FeatureFlags\Exceptions\FeatureDisabledException;
 use Dive\FeatureFlags\Exceptions\UnknownFeatureException;
 use Dive\FeatureFlags\Models\Feature;
 use Illuminate\Support\Facades\Event;
@@ -153,3 +154,13 @@ it('sets scope to "*" before creating', function () {
 it('throws if a feature cannot be found', function () {
     $this->model->find('gibberish');
 })->throws(UnknownFeatureException::class);
+
+it('can verify a given feature', function () {
+    $feature = Feature::factory()->withName('dashboard')->create();
+
+    expect(fn () => $feature->verify('dashboard'))->not->toThrow(FeatureDisabledException::class);
+
+    $feature->toggle();
+
+    expect(fn () => $feature->verify('dashboard'))->toThrow(FeatureDisabledException::class);
+});

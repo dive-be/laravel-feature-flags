@@ -30,4 +30,9 @@ interface Feature
     public function isEnabled(): bool;
 
     public function toggle(): bool;
+
+    /**
+     * @throws \Dive\FeatureFlags\Exceptions\FeatureDisabledException
+     */
+    public function verify(string $name, ?string $scope = null): void;
 }

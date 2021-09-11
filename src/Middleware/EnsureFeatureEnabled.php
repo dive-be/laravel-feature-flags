@@ -4,7 +4,6 @@ namespace Dive\FeatureFlags\Middleware;
 
 use Closure;
 use Dive\FeatureFlags\Contracts\Feature;
-use Dive\FeatureFlags\Exceptions\FeatureDisabledException;
 use Illuminate\Http\Request;
 
 class EnsureFeatureEnabled
@@ -17,9 +16,7 @@ class EnsureFeatureEnabled
         string $name,
         ?string $scope = null,
     ) {
-        if ($this->feature->disabled($name, $scope)) {
-            throw FeatureDisabledException::make($this->feature->find($name, $scope));
-        }
+        $this->feature->verify($name, $scope);
 
         return $next($request);
     }

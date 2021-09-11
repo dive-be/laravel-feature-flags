@@ -5,6 +5,7 @@ namespace Dive\FeatureFlags\Models;
 use Dive\FeatureFlags\Contracts\Feature as Contract;
 use Dive\FeatureFlags\Database\Factories\FeatureFactory;
 use Dive\FeatureFlags\Events\FeatureToggled;
+use Dive\FeatureFlags\Exceptions\FeatureDisabledException;
 use Dive\FeatureFlags\Exceptions\UnknownFeatureException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -60,9 +61,6 @@ class Feature extends Model implements Contract
         return $this->find($name, $scope)->isEnabled();
     }
 
-    /**
-     * @throws UnknownFeatureException
-     */
     public function find(string $name, ?string $scope = null): self
     {
         $scope ??= static::$default;
@@ -76,16 +74,6 @@ class Feature extends Model implements Contract
         }
 
         return $feature;
-    }
-
-    public function getStateAttribute(): string
-    {
-        return $this->isEnabled() ? '<fg=green>enabled</>' : '<fg=red>disabled</>';
-    }
-
-    public function getUniqueNameAttribute(): string
-    {
-        return $this->scope.'.'.$this->name;
     }
 
     public function getDescription(): string
@@ -134,6 +122,25 @@ class Feature extends Model implements Contract
         self::$dispatcher->dispatch(FeatureToggled::make($this));
 
         return $this->isEnabled();
+    }
+
+    public function verify(string $name, ?string $scope = null): void
+    {
+        $feature = $this->find($name, $scope);
+
+        if ($feature->isDisabled()) {
+            throw FeatureDisabledException::make($feature);
+        }
+    }
+
+    public function getStateAttribute(): string
+    {
+        return $this->isEnabled() ? '<fg=green>enabled</>' : '<fg=red>disabled</>';
+    }
+
+    public function getUniqueNameAttribute(): string
+    {
+        return $this->scope.'.'.$this->name;
     }
 
     public function __toString()
