@@ -1,10 +1,10 @@
-# Handle feature flags within your app
+# ⛳️ - Handle feature flags within your Laravel app
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/dive-be/laravel-feature-flags.svg?style=flat-square)](https://packagist.org/packages/:vendor_name/:package_name)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/dive-be/laravel-feature-flags.svg?style=flat-square)](https://packagist.org/packages/dive-be/laravel-feature-flags)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![Total Downloads](https://img.shields.io/packagist/dt/dive-be/laravel-feature-flags.svg?style=flat-square)](https://packagist.org/packages/dive-be/laravel-feature-flags)
 
 This package will assist you in flagging certain parts of your application as (in)active.
-
-⚠️ Minor releases of this package may cause breaking changes as it has no stable release yet.
 
 ## What problem does this package solve?
 
@@ -24,6 +24,23 @@ Once composer has finished, you must publish the configuration and migration:
 php artisan feature:install
 ```
 
+This is the contents of the published config file:
+
+```php
+return [
+
+    /**
+     * The name of the cache key that will be used to cache your app's features.
+     */
+    'cache_key' => 'feature_flags',
+
+    /**
+     * The feature model that will be used to retrieve your app's features.
+     */
+    'feature_model' => Dive\FeatureFlags\Models\Feature::class,
+];
+```
+
 If you don't need multi-locale support, you are now good to go.
 
 ### Multiple languages support
@@ -34,12 +51,10 @@ This package provides first-class support for multiple languages using Spatie's 
 composer require spatie/laravel-translatable
 ```
 
-Next, find the configuration file and change `feature_model` to:
+Next, go to the configuration file and change `feature_model` to:
 
 ```php
-return [
-    'feature_model' => Dive\FeatureFlags\Models\TranslatableFeature::class,
-];
+Dive\FeatureFlags\Models\TranslatableFeature::class
 ```
 
 Finally, find the migration and uncomment the comment while also deleting everything in front of it. It should read:
@@ -51,7 +66,9 @@ $table->timestamp('disabled_at')->nullable();
 // ...
 ```
 
-## Setting up your app's initial features
+## Usage
+
+### Setting up your app's initial features
 
 Seeding the (initial) features can be done in a regular Laravel seeder.
 
@@ -62,6 +79,7 @@ php artisan make:seeder FeaturesTableSeeder
 Here is an example of what it might look like:
 
 ```php
+use Dive\FeatureFlags\Models\Feature;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -75,67 +93,74 @@ class FeaturesTableSeeder extends Seeder
                 'label' => 'Public registrations',
                 'message' => 'The registration period has ended. Thanks for participating in our programme.',
                 'name' => 'registrations',
-                'scope' => '*',
+                'scope' => Feature::getDefaultScope(),
             ],
             [
                 'description' => 'Display the App version on the homepage',
                 'label' => 'Application version',
                 'message' => 'Version is hidden',
                 'name' => 'version',
-                'scope' => '*',
+                'scope' => Feature::getDefaultScope(),
             ],
         ], ['scope', 'name'], ['description', 'label', 'message']);
     }
 }
 ```
 
-## Usage
+### Resolving the manager
 
-### Checking a feature's state
-
-There are lots of ways to check whether a feature is enabled/disabled.
+This package provides every possible way to resolve a `Feature` instance out of the IoC container. We've got you covered!
 
 #### Facade
 
 ```php
 use Dive\FeatureFlags\Facades\Feature;
 
-Feature::disabled('registrations');
-Feature::enabled('registrations');
+Feature::find('dashboard');
 ```
 
-#### Gate
+or using the alias (particularly helpful in Blade views)
 
 ```php
-use Illuminate\Support\Facades\Gate;
+use Feature;
 
-Gate::check('feature', 'registrations');
+Feature::disabled('dashboard');
 ```
 
-#### Helper functions
+#### Helpers
 
 ```php
-feature_disabled('registrations');
-feature_enabled('registrations');
+feature('dashboard');
+feature_disabled('dashboard');
+feature_enabled('dashboard');
+feature_verify('dashboard');
 ```
 
-#### Container binding
+#### Dependency injection
 
 ```php
 use Dive\FeatureFlags\Contracts\Feature;
 
-// Somewhere dependency injected
-public function handle(Feature $feature)
+public function index(Feature $feature)
 {
-    $feature->disabled('registrations');
-    $feature->enabled('registrations');
+    $feature->verify('dashboard');
+
+    return view('layouts.dashboard');
 }
 ```
 
-### Blade templates
+#### Service Location
 
-You can use the `@disabled` or `@enabled` directives to conditionally display content in your views depending on a feature's current state. 
-Using the `@disabled` directive first will make a feature's `message` property automatically available. Examples:
+```php
+app('feature')->find('dashboard');
+```
+
+## Blade directives
+
+### @disabled
+
+You can use the `@disabled` directive to conditionally display content in your views depending on a feature's current state. 
+Using this directive first will make the feature's `message` property automatically available as a variable inside the block. Examples:
 
 ```blade
 @disabled('registrations')
@@ -149,6 +174,10 @@ Using the `@disabled` directive first will make a feature's `message` property a
 @enddisabled
 ```
 
+### @enabled
+
+You can also use the `@enabled` directive to do the same thing as above. However, the `$message` variable will **not** be available inside the `@disabled` block when using this directive.
+
 ```blade
 @enabled('registrations')
     <div class="alert info">text</div>
@@ -157,7 +186,9 @@ Using the `@disabled` directive first will make a feature's `message` property a
 @endenabled
 ```
 
-### Route protection
+## Guarding parts of your application
+
+### Route middleware
 
 This package provides a `feature` middleware to guard certain parts of your application. An `AccessDeniedHttpException` (403) will be thrown if the feature is disabled.
 
@@ -165,9 +196,11 @@ This package provides a `feature` middleware to guard certain parts of your appl
 Route::middleware('feature:registrations')->get('registrations', RegistrationsController::class);
 ```
 
+## Artisan commands
+
 ### Toggling a feature on/off
 
-Since the features are managed through a `Feature` Eloquent model, you may use solutions such as Laravel Nova. 
+Since the features are managed through a `Feature` Eloquent model, you can use solutions such as Laravel Nova. 
 
 However, when developing locally, you might want to easily turn a feature on/off. You can do this using the command below:
 
