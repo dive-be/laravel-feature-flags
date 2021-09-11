@@ -7,7 +7,7 @@ use Dive\FeatureFlags\Contracts\Feature;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-class EnsureFeatureIsEnabled
+class EnsureFeatureEnabled
 {
     public function __construct(private Feature $feature) {}
 

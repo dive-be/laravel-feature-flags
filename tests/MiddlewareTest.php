@@ -2,13 +2,13 @@
 
 namespace Tests;
 
-use Dive\FeatureFlags\Middleware\EnsureFeatureIsEnabled;
+use Dive\FeatureFlags\Middleware\EnsureFeatureEnabled;
 use Dive\FeatureFlags\Models\Feature;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 beforeEach(function () {
-    $this->mw = new EnsureFeatureIsEnabled(new Feature());
+    $this->mw = new EnsureFeatureEnabled(new Feature());
 });
 
 it('halts execution with 403 if feature is disabled', function () {

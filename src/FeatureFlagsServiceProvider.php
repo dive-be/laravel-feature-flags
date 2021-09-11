@@ -7,7 +7,7 @@ use Dive\FeatureFlags\Commands\InstallPackageCommand;
 use Dive\FeatureFlags\Commands\ListFeatureCommand;
 use Dive\FeatureFlags\Commands\ToggleFeatureCommand;
 use Dive\FeatureFlags\Contracts\Feature;
-use Dive\FeatureFlags\Middleware\EnsureFeatureIsEnabled;
+use Dive\FeatureFlags\Middleware\EnsureFeatureEnabled;
 use Dive\FeatureFlags\Models\Feature as Model;
 use Dive\FeatureFlags\Models\Observers\FeatureObserver;
 use Illuminate\Auth\Access\Response;
@@ -101,7 +101,7 @@ class FeatureFlagsServiceProvider extends ServiceProvider
 
     private function registerMiddleware()
     {
-        $this->app->make('router')->aliasMiddleware('feature', EnsureFeatureIsEnabled::class);
+        $this->app->make('router')->aliasMiddleware('feature', EnsureFeatureEnabled::class);
     }
 
     private function registerMigration()
