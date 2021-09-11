@@ -8,6 +8,8 @@ use Dive\FeatureFlags\Commands\ListFeatureCommand;
 use Dive\FeatureFlags\Commands\ToggleFeatureCommand;
 use Dive\FeatureFlags\Contracts\Feature;
 use Dive\FeatureFlags\Middleware\EnsureFeatureIsEnabled;
+use Dive\FeatureFlags\Models\Feature as Model;
+use Dive\FeatureFlags\Models\Observers\FeatureObserver;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -28,6 +30,7 @@ class FeatureFlagsServiceProvider extends ServiceProvider
         $this->registerAtGate();
         $this->registerDirectives();
         $this->registerMiddleware();
+        $this->registerModelObservers();
     }
 
     public function register()
@@ -115,5 +118,10 @@ class FeatureFlagsServiceProvider extends ServiceProvider
                 $stub => $this->app->databasePath("migrations/{$timestamp}_{$migration}"),
             ], 'migrations');
         }
+    }
+
+    private function registerModelObservers()
+    {
+        Model::observe(FeatureObserver::class);
     }
 }

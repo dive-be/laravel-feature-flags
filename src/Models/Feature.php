@@ -35,12 +35,6 @@ class Feature extends Model implements Contract
 
     protected $guarded = [];
 
-    protected static function booted()
-    {
-        self::creating(fn (self $model) => $model->scope ??= self::GENERAL);
-        self::saved(fn () => Cache::forget(Config::get('feature-flags.cache_key')));
-    }
-
     protected static function newFactory()
     {
         return FeatureFactory::new();
