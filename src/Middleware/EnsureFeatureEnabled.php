@@ -4,8 +4,8 @@ namespace Dive\FeatureFlags\Middleware;
 
 use Closure;
 use Dive\FeatureFlags\Contracts\Feature;
+use Dive\FeatureFlags\Exceptions\FeatureDisabledException;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class EnsureFeatureEnabled
 {
@@ -18,7 +18,7 @@ class EnsureFeatureEnabled
         ?string $scope = null,
     ) {
         if ($this->feature->disabled($name, $scope)) {
-            throw new AccessDeniedHttpException($this->feature->find($name, $scope)->getMessage());
+            throw FeatureDisabledException::make($this->feature->find($name, $scope));
         }
 
         return $next($request);
