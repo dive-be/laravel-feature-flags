@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 
 /**
  * @property string              $description
@@ -26,8 +27,6 @@ class Feature extends Model implements Contract
 {
     use HasFactory;
 
-    public const CACHE = 'feature_flags';
-
     public const GENERAL = '*';
 
     public $timestamps = false;
@@ -39,7 +38,7 @@ class Feature extends Model implements Contract
     protected static function booted()
     {
         self::creating(fn (self $model) => $model->scope ??= self::GENERAL);
-        self::saved(fn () => Cache::forget(self::CACHE));
+        self::saved(fn () => Cache::forget(Config::get('feature-flags.cache_key')));
     }
 
     protected static function newFactory()
@@ -74,7 +73,7 @@ class Feature extends Model implements Contract
     {
         $scope ??= self::GENERAL;
 
-        $feature = Cache::rememberForever(self::CACHE, static function () {
+        $feature = Cache::rememberForever(Config::get('feature-flags.cache_key'), function () {
             return self::all()->keyBy(fn (self $feature) => $feature->unique_name);
         })->get((new self(compact('name', 'scope')))->unique_name);
 
