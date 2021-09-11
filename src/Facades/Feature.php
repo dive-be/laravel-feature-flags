@@ -2,7 +2,6 @@
 
 namespace Dive\FeatureFlags\Facades;
 
-use Dive\FeatureFlags\Contracts\Feature as Contract;
 use Illuminate\Support\Facades\Facade;
 
 /**
@@ -14,6 +13,6 @@ class Feature extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return Contract::class;
+        return 'feature';
     }
 }

@@ -6,23 +6,23 @@ if (! function_exists('feature')) {
     function feature(?string $name = null, ?string $scope = null): Feature
     {
         if (is_null($name)) {
-            return app(Feature::class);
+            return app(__FUNCTION__);
         }
 
-        return app(Feature::class)->find($name, $scope);
+        return app(__FUNCTION__)->find($name, $scope);
     }
 }
 
 if (! function_exists('feature_disabled')) {
     function feature_disabled(string $name, ?string $scope = null): bool
     {
-        return app(Feature::class)->disabled($name, $scope);
+        return app('feature')->disabled($name, $scope);
     }
 }
 
 if (! function_exists('feature_enabled')) {
     function feature_enabled(string $name, ?string $scope = null): bool
     {
-        return app(Feature::class)->enabled($name, $scope);
+        return app('feature')->enabled($name, $scope);
     }
 }
