@@ -2,20 +2,26 @@
 
 namespace Dive\FeatureFlags;
 
+use Closure;
 use Dive\FeatureFlags\Commands\ClearCacheCommand;
 use Dive\FeatureFlags\Commands\InstallPackageCommand;
 use Dive\FeatureFlags\Commands\ListFeatureCommand;
 use Dive\FeatureFlags\Commands\ToggleFeatureCommand;
 use Dive\FeatureFlags\Contracts\Feature;
+use Dive\FeatureFlags\Events\FeatureToggled;
+use Dive\FeatureFlags\Listeners\ClearCacheListener;
 use Dive\FeatureFlags\Middleware\EnsureFeatureEnabled;
 use Dive\FeatureFlags\Models\Feature as Model;
 use Dive\FeatureFlags\Models\Observers\FeatureObserver;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\Compilers\BladeCompiler;
 
 class FeatureFlagsServiceProvider extends ServiceProvider
 {
@@ -27,9 +33,6 @@ class FeatureFlagsServiceProvider extends ServiceProvider
             $this->registerMigration();
         }
 
-        $this->registerAtGate();
-        $this->registerDirectives();
-        $this->registerMiddleware();
         $this->registerModelObservers();
     }
 
@@ -41,22 +44,24 @@ class FeatureFlagsServiceProvider extends ServiceProvider
         $this->app->singleton(Feature::class, static function (Application $app) {
             return new ($app->make('config')->get('feature-flags.feature_model'))();
         });
+
+        $this->callAfterResolving(Gate::class, Closure::fromCallable([$this, 'registerAtGate']));
+        $this->callAfterResolving('blade.compiler', Closure::fromCallable([$this, 'registerDirectives']));
+        $this->callAfterResolving('events', Closure::fromCallable([$this, 'registerListeners']));
+        $this->callAfterResolving('router', Closure::fromCallable([$this, 'registerMiddleware']));
     }
 
-    private function registerAtGate()
+    private function registerAtGate(Gate $gate)
     {
-        $this->app->make(Gate::class)->define(
-            'feature',
-            function (?Authenticatable $user, string $name, ?string $scope = null) {
-                $feature = $this->app->make(Feature::class);
+        $gate->define('feature', function (?Authenticatable $user, string $name, ?string $scope = null) {
+            $feature = $this->app->make(Feature::class);
 
-                if ($feature->disabled($name, $scope)) {
-                    return Response::deny($feature->find($name, $scope)->getMessage());
-                }
-
-                return Response::allow();
+            if ($feature->disabled($name, $scope)) {
+                return Response::deny($feature->find($name, $scope)->getMessage());
             }
-        );
+
+            return Response::allow();
+        });
     }
 
     private function registerCommands()
@@ -78,10 +83,8 @@ class FeatureFlagsServiceProvider extends ServiceProvider
         ], 'config');
     }
 
-    private function registerDirectives()
+    private function registerDirectives(BladeCompiler $blade)
     {
-        $blade = $this->app->make('blade.compiler');
-
         $blade->directive('disabled', fn ($expression) => empty($expression)
             ? '<?php else: ?>'
             : "<?php if (feature_disabled({$expression})) : "
@@ -99,9 +102,14 @@ class FeatureFlagsServiceProvider extends ServiceProvider
         $blade->directive('endenabled', fn () => '<?php endif ?>');
     }
 
-    private function registerMiddleware()
+    private function registerListeners(Dispatcher $dispatcher)
     {
-        $this->app->make('router')->aliasMiddleware('feature', EnsureFeatureEnabled::class);
+        $dispatcher->listen(FeatureToggled::class, ClearCacheListener::class);
+    }
+
+    private function registerMiddleware(Router $router)
+    {
+        $router->aliasMiddleware('feature', EnsureFeatureEnabled::class);
     }
 
     private function registerMigration()
