@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Dive\FeatureFlags\Models;
 
@@ -140,7 +140,7 @@ class Feature extends Model implements Contract
 
     public function getUniqueNameAttribute(): string
     {
-        return $this->scope.'.'.$this->name;
+        return $this->scope . '.' . $this->name;
     }
 
     public function __toString()

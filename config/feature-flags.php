@@ -1,7 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
 return [
-
     /**
      * The name of the cache key that will be used to cache your app's features.
      */

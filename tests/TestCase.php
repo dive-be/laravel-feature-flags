@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests;
 
@@ -32,7 +32,7 @@ abstract class TestCase extends BaseTestCase
     {
         $app->make('db')->connection()->getSchemaBuilder()->dropAllTables();
 
-        require_once __DIR__.'/../database/migrations/create_features_table.php.stub';
+        require_once __DIR__ . '/../database/migrations/create_features_table.php.stub';
 
         (new CreateFeaturesTable())->up();
     }

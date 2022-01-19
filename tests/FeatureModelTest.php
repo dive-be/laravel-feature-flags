@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Tests;
 
@@ -132,7 +132,7 @@ it('has a state accessor and getter', function () {
 it('has a unique_name accessor', function () {
     $feature = Feature::factory()->withScope($scope = 'webshop')->make();
 
-    expect($feature->unique_name)->toBe($scope.'.'.$feature->name);
+    expect($feature->unique_name)->toBe($scope . '.' . $feature->name);
 });
 
 it('is stringable', function () {

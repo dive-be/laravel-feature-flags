@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Dive\FeatureFlags;
 
@@ -35,7 +35,7 @@ class FeatureFlagsServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/feature-flags.php', 'feature-flags');
+        $this->mergeConfigFrom(__DIR__ . '/../config/feature-flags.php', 'feature-flags');
 
         $this->app->alias(Feature::class, 'feature');
         $this->app->singleton(Feature::class, static function (Application $app) {
@@ -74,7 +74,7 @@ class FeatureFlagsServiceProvider extends ServiceProvider
         $config = 'feature-flags.php';
 
         $this->publishes([
-            __DIR__.'/../config/'.$config => $this->app->configPath($config),
+            __DIR__ . '/../config/' . $config => $this->app->configPath($config),
         ], 'config');
     }
 
@@ -85,16 +85,16 @@ class FeatureFlagsServiceProvider extends ServiceProvider
         $blade->directive('disabled', fn ($expression) => empty($expression)
             ? '<?php else: ?>'
             : "<?php if (feature_disabled({$expression})) : "
-                .PHP_EOL.'if (isset($message)) { $__messageOriginal = $message; } '
-                .PHP_EOL.'$message = feature('.$expression.')->message; ?>');
+                . PHP_EOL . 'if (isset($message)) { $__messageOriginal = $message; } '
+                . PHP_EOL . '$message = feature(' . $expression . ')->message; ?>');
 
         $blade->directive('enabled', fn ($expression) => empty($expression)
             ? '<?php else: ?>'
             : "<?php if (feature_enabled({$expression})) : ?>");
 
         $blade->directive('enddisabled', fn () => '<?php unset($message);'
-            .PHP_EOL.'if (isset($__messageOriginal)) { $message = $__messageOriginal; } '
-            .PHP_EOL.'endif ?>');
+            . PHP_EOL . 'if (isset($__messageOriginal)) { $message = $__messageOriginal; } '
+            . PHP_EOL . 'endif ?>');
 
         $blade->directive('endenabled', fn () => '<?php endif ?>');
     }
@@ -112,7 +112,7 @@ class FeatureFlagsServiceProvider extends ServiceProvider
 
         if ($doesntExist) {
             $timestamp = date('Y_m_d_His', time());
-            $stub = __DIR__."/../database/migrations/{$migration}.stub";
+            $stub = __DIR__ . "/../database/migrations/{$migration}.stub";
 
             $this->publishes([
                 $stub => $this->app->databasePath("migrations/{$timestamp}_{$migration}"),
