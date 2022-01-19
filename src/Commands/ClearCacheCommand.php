@@ -2,9 +2,8 @@
 
 namespace Dive\FeatureFlags\Commands;
 
-use Illuminate\Cache\CacheManager;
+use Dive\FeatureFlags\Actions\ClearCacheAction;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Config\Repository;
 
 class ClearCacheCommand extends Command
 {
@@ -12,9 +11,9 @@ class ClearCacheCommand extends Command
 
     protected $signature = 'feature:clear';
 
-    public function handle(CacheManager $cache, Repository $config)
+    public function handle(ClearCacheAction $action)
     {
-        $cache->store()->forget($config->get('feature-flags.cache_key'));
+        $action->execute();
 
         $this->info('🔥  Feature flags cache cleared.');
 

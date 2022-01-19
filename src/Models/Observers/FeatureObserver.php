@@ -2,9 +2,9 @@
 
 namespace Dive\FeatureFlags\Models\Observers;
 
+use Dive\FeatureFlags\Actions\ClearCacheAction;
 use Dive\FeatureFlags\Models\Feature;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\App;
 
 class FeatureObserver
 {
@@ -15,6 +15,6 @@ class FeatureObserver
 
     public function saved()
     {
-        Cache::forget(Config::get('feature-flags.cache_key'));
+        App::make(ClearCacheAction::class)->execute();
     }
 }
