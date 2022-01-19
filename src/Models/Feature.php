@@ -38,12 +38,12 @@ class Feature extends Model implements Contract
 
     public static function getDefaultScope(): string
     {
-        return static::$default;
+        return self::$default;
     }
 
     public static function setDefaultScope(string $scope)
     {
-        static::$default = $scope;
+        self::$default = $scope;
     }
 
     protected static function newFactory()
@@ -63,7 +63,7 @@ class Feature extends Model implements Contract
 
     public function find(string $name, ?string $scope = null): self
     {
-        $scope ??= static::$default;
+        $scope ??= self::$default;
 
         $feature = Cache::rememberForever(Config::get('feature-flags.cache_key'), function () {
             return self::all()->keyBy(fn (self $feature) => $feature->unique_name);
