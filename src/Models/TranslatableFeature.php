@@ -13,7 +13,7 @@ class TranslatableFeature extends Feature
 
     protected array $translatable = ['message'];
 
-    protected static function newFactory()
+    protected static function newFactory(): TranslatableFeatureFactory
     {
         return TranslatableFeatureFactory::new();
     }

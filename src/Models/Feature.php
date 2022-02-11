@@ -46,7 +46,7 @@ class Feature extends Model implements Contract
         self::$default = $scope;
     }
 
-    protected static function newFactory()
+    protected static function newFactory(): FeatureFactory
     {
         return FeatureFactory::new();
     }

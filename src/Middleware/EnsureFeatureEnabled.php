@@ -8,14 +8,12 @@ use Illuminate\Http\Request;
 
 class EnsureFeatureEnabled
 {
-    public function __construct(private Feature $feature) {}
+    public function __construct(
+        private Feature $feature,
+    ) {}
 
-    public function handle(
-        Request $request,
-        Closure $next,
-        string $name,
-        ?string $scope = null,
-    ) {
+    public function handle(Request $request, Closure $next, string $name, ?string $scope = null)
+    {
         $this->feature->verify($name, $scope);
 
         return $next($request);

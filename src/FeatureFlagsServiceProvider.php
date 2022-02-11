@@ -2,16 +2,15 @@
 
 namespace Dive\FeatureFlags;
 
-use Closure;
 use Dive\FeatureFlags\Commands\ClearCacheCommand;
 use Dive\FeatureFlags\Commands\InstallPackageCommand;
 use Dive\FeatureFlags\Commands\ListFeatureCommand;
 use Dive\FeatureFlags\Commands\ToggleFeatureCommand;
-use Dive\FeatureFlags\Contracts\Feature;
+use Dive\FeatureFlags\Contracts\Feature as Contract;
 use Dive\FeatureFlags\Events\FeatureToggled;
 use Dive\FeatureFlags\Listeners\ClearCacheListener;
 use Dive\FeatureFlags\Middleware\EnsureFeatureEnabled;
-use Dive\FeatureFlags\Models\Feature as Model;
+use Dive\FeatureFlags\Models\Feature;
 use Dive\FeatureFlags\Models\Observers\FeatureObserver;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Access\Gate;
@@ -33,28 +32,28 @@ class FeatureFlagsServiceProvider extends ServiceProvider
             $this->registerMigration();
         }
 
-        $this->registerModelObservers();
+        $this->registerObservers();
     }
 
     public function register()
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/feature-flags.php', 'feature-flags');
 
-        $this->app->alias(Feature::class, 'feature');
-        $this->app->singleton(Feature::class, static function (Application $app) {
-            return new ($app->make('config')->get('feature-flags.feature_model'))();
-        });
+        $this->app->alias(Contract::class, 'feature');
+        $this->app->singleton(Contract::class,
+            static fn (Application $app) => new ($app['config']['feature-flags.feature_model'])()
+        );
 
-        $this->callAfterResolving(Gate::class, Closure::fromCallable([$this, 'registerAtGate']));
-        $this->callAfterResolving('blade.compiler', Closure::fromCallable([$this, 'registerDirectives']));
-        $this->callAfterResolving('events', Closure::fromCallable([$this, 'registerListeners']));
-        $this->callAfterResolving('router', Closure::fromCallable([$this, 'registerMiddleware']));
+        $this->callAfterResolving(Gate::class, $this->registerAtGate(...));
+        $this->callAfterResolving('blade.compiler', $this->registerDirectives(...));
+        $this->callAfterResolving('events', $this->registerListeners(...));
+        $this->callAfterResolving('router', $this->registerMiddleware(...));
     }
 
     private function registerAtGate(Gate $gate)
     {
         $gate->define('feature', function (?Authenticatable $user, string $name, ?string $scope = null) {
-            $feature = $this->app->make(Feature::class);
+            $feature = $this->app->make('feature');
 
             if ($feature->disabled($name, $scope)) {
                 return Response::deny($feature->find($name, $scope)->getMessage());
@@ -128,8 +127,8 @@ class FeatureFlagsServiceProvider extends ServiceProvider
         }
     }
 
-    private function registerModelObservers()
+    private function registerObservers()
     {
-        Model::observe(FeatureObserver::class);
+        Feature::observe(FeatureObserver::class);
     }
 }

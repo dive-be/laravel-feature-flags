@@ -11,7 +11,7 @@ class ClearCacheCommand extends Command
 
     protected $signature = 'feature:clear';
 
-    public function handle(ClearCacheAction $action)
+    public function handle(ClearCacheAction $action): int
     {
         $action->execute();
 

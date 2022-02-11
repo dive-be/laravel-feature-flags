@@ -6,9 +6,11 @@ use Dive\FeatureFlags\Contracts\Feature;
 
 class FeatureToggled
 {
-    public function __construct(public Feature $feature) {}
+    public function __construct(
+        public readonly Feature $feature,
+    ) {}
 
-    public static function make(Feature $feature)
+    public static function make(Feature $feature): self
     {
         return new self($feature);
     }

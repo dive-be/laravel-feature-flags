@@ -11,7 +11,7 @@ class FeatureDisabledException extends AccessDeniedHttpException
 
     public static function make(Feature $feature): self
     {
-        return (new self($feature->getMessage()))->withFeature($feature);
+        return (new self($feature->getMessage() ?? ''))->withFeature($feature);
     }
 
     public function withFeature(Feature $feature): self

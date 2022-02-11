@@ -10,7 +10,7 @@ class InstallPackageCommand extends Command
 
     protected $signature = 'feature:install';
 
-    public function handle()
+    public function handle(): int
     {
         if ($this->isHidden()) {
             $this->error('🤚  Feature flags is already installed.');
@@ -38,7 +38,7 @@ class InstallPackageCommand extends Command
         return self::SUCCESS;
     }
 
-    public function isHidden()
+    public function isHidden(): bool
     {
         return file_exists(config_path('feature-flags.php'));
     }

@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use CreateFeaturesTable;
 use Dive\FeatureFlags\FeatureFlagsServiceProvider;
 use Dive\FeatureFlags\Models\Feature;
 use Orchestra\Testbench\TestCase as BaseTestCase;
@@ -16,14 +15,14 @@ abstract class TestCase extends BaseTestCase
         $this->setUpDatabase($this->app);
     }
 
-    protected function getPackageAliases($app)
+    protected function getPackageAliases($app): array
     {
         return [
             'Feature' => Feature::class,
         ];
     }
 
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [FeatureFlagsServiceProvider::class];
     }
@@ -32,8 +31,8 @@ abstract class TestCase extends BaseTestCase
     {
         $app->make('db')->connection()->getSchemaBuilder()->dropAllTables();
 
-        require_once __DIR__ . '/../database/migrations/create_features_table.php.stub';
+        $features = require __DIR__ . '/../database/migrations/create_features_table.php.stub';
 
-        (new CreateFeaturesTable())->up();
+        $features->up();
     }
 }

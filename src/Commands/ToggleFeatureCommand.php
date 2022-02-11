@@ -13,7 +13,7 @@ class ToggleFeatureCommand extends Command
 
     protected $signature = 'feature:toggle {name} {scope?}';
 
-    public function handle(Application $app, Feature $feature)
+    public function handle(Application $app, Feature $feature): int
     {
         try {
             $found = $feature->find($this->argument('name'), $this->argument('scope'));

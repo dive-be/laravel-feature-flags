@@ -9,7 +9,7 @@ class FeatureFactory extends Factory
 {
     protected $model = Feature::class;
 
-    public function definition()
+    public function definition(): array
     {
         return [
             'description' => $this->faker->text,

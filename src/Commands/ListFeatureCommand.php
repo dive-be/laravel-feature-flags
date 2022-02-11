@@ -19,7 +19,7 @@ class ListFeatureCommand extends Command
 
     protected array $headers = ['state', 'name', 'scope', 'label', 'description', 'message'];
 
-    public function handle(Feature $feature)
+    public function handle(Feature $feature): int
     {
         $features = $feature->getFeatures();
 

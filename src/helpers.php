@@ -6,10 +6,10 @@ if (! function_exists('feature')) {
     function feature(?string $name = null, ?string $scope = null): Feature
     {
         if (is_null($name)) {
-            return app(__FUNCTION__);
+            return app('feature');
         }
 
-        return app(__FUNCTION__)->find($name, $scope);
+        return app('feature')->find($name, $scope);
     }
 }
 
