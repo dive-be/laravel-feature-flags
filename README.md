@@ -1,10 +1,10 @@
-# ⛳️ - Handle feature flags within your Laravel app
+# ⛳️ - Abandoned
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/dive-be/laravel-feature-flags.svg?style=flat-square)](https://packagist.org/packages/dive-be/laravel-feature-flags)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Total Downloads](https://img.shields.io/packagist/dt/dive-be/laravel-feature-flags.svg?style=flat-square)](https://packagist.org/packages/dive-be/laravel-feature-flags)
+Please use much better alternatives:
 
-This package will assist you in flagging certain parts of your application as (in)active.
+- [ryangjchandler/laravel-feature-flags](https://github.com/ryangjchandler/laravel-feature-flags)
+- [juststeveking/laravel-feature-flags](https://github.com/JustSteveKing/laravel-feature-flags)
+- [ylsideas/feature-flags](https://github.com/ylsideas/feature-flags)
 
 ## What problem does this package solve?
 
